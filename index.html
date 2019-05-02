@@ -38,7 +38,9 @@
 		// x and y are logically indexed by 1, starting from bottom left,
 		// first x across then y up. easy. This means tho some translations
 		// to an index-by-zero system that is right then down
-		let graphicalWrite = (x, y)  => {
+
+		// hehehe takes a shade from 0(black) to 49(white)
+		let graphicalWrite = (x, y, shade)  => {
 
 			// XXX for now let's just be graceful if out of range
 			if (x < 1 || x > 30) {
@@ -55,11 +57,16 @@
 			// 30 magic
 			y = 30 - y - 1;
 
+			// now for shade, we want 0->0 and 49->255 (heh, we may clip perfect white)
+			let intensity = Math.floor(shade / 49 * 255);
+			let color_string = "rgb(" + intensity.toString() + "," + 
+				intensity.toString() + "," + intensity.toString() + ")";
+
 
 			let mydiv = document.getElementById(x.toString() + "," + y.toString());
 			// yes inelegant here we have to write out redundant style. Whatever
 			// this will be in webgl later anyway
-			mydiv.style="height:20px;width:20px;background-color:rgb(255,255,255);"
+			mydiv.style="height:20px;width:20px;background-color:" + color_string + ";";
 		}
 
 
@@ -261,16 +268,17 @@
 					break;
 				}
 
+				// XXX Hacks still cheating
 				case "cp": {
 
-					let shade = getNthWord(line, 1);
+					let shade = getIntMeaning(getNthWord(line, 1));
 
 					let x = getIntMeaning("**idx**");
 					let y = getIntMeaning("*idx*");
 
 					console.log('Writing shade ', shade, 'to ', x, ',', y);
 
-					graphicalWrite(x, y);
+					graphicalWrite(x, y, shade);
 					
 
 
@@ -306,6 +314,17 @@
 
 				}
 
+				case "rngi": {
+
+					let arg1 = getIntMeaning(getNthWord(line, 1));
+					let dest_name = getNthWord(line, 2);
+					// + 1 for index by 1
+					GVARS[dest_name] = Math.floor(Math.random()*arg1) + 1;
+
+
+					break;
+				}
+
 
 				default: {
 					console.log("YA", line);
@@ -328,13 +347,14 @@
 
 lp 1 30
 	lp 1 30
+		rngi 50 myrand
 		sub 1 **idx** var1
 		if *idx* == var1
-			cp #49 S>**idx**>*idx*
+			cp myrand S>**idx**>*idx*
 		fi
 		add 1 **idx** var2
 		if *idx* == var2
-			cp #49 S>**idx**>*idx*
+			cp myrand S>**idx**>*idx*
 		fi
 	pl
 pl`
