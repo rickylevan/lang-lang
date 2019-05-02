@@ -39,6 +39,15 @@
 		// first x across then y up. easy. This means tho some translations
 		// to an index-by-zero system that is right then down
 		let graphicalWrite = (x, y)  => {
+
+			// XXX for now let's just be graceful if out of range
+			if (x < 1 || x > 30) {
+				return;
+			}
+			if (y < 1 || y > 30) {
+				return;
+			}
+
 			// adjust for index convention
 			x--;
 			y--;
@@ -59,6 +68,9 @@
 		let SIP = 0;
 
 		let SKIP_SIP_INC = false;
+
+
+		let GVARS = {};
 
 
 
@@ -98,6 +110,11 @@
 			}
 			if (blah == "**idx**") {
 				return loop_idxes[LD-1];
+			}
+
+			let maybsVal = GVARS[blah];
+			if (maybsVal != undefined) {
+				return maybsVal;
 			}
 
 		}
@@ -154,12 +171,13 @@
 
 			switch(OP) {
 
-				case "fi":
+				case "fi": {
 					ICON = true;
 					console.log("FI", line);
 					break;
+				}
 
-				case "lp":
+				case "lp": {
 					console.log("LP", line);
 
 					let start = parseInt(getNthWord(line, 1));
@@ -176,10 +194,10 @@
 					l(loop_idxes);
 					l(loop_fail_spots);
 					break;
+				}
 
 
-
-				case "if":
+				case "if": {
 					console.log("IF", line);
 
 					// simple assumptions now for the win
@@ -205,8 +223,9 @@
 					}
 
 					break;
+				}
 
-				case "pl":
+				case "pl": {
 					// one of TWO things can happen here:
 					// 1) we continue and pop loop context
 					// or
@@ -240,8 +259,9 @@
 					}
 
 					break;
+				}
 
-				case "cp":
+				case "cp": {
 
 					let shade = getNthWord(line, 1);
 
@@ -256,10 +276,24 @@
 
 
 					break;
+				}
+
+				case "add": {
+
+					// hey this nth word as 1 works well cuz the op is 0, score
+					let arg1 = getIntMeaning(getNthWord(line, 1));
+					let arg2 = getIntMeaning(getNthWord(line, 2));
+					let dest_name = getNthWord(line, 3);
+
+					let dest = arg1 + arg2;
+					GVARS[dest_name] = dest;
+
+				}
 
 
-				default:
+				default: {
 					console.log("YA", line);
+				}
 
 
 			}			
@@ -281,8 +315,14 @@ lp 1 30
 		if *idx* == **idx**
 			cp #49 S>**idx**>*idx*
 		fi
+		add 2 **idx** firstvar
+		if *idx* == firstvar
+			cp #49 S>**idx**>*idx*
+		fi
 	pl
 pl`
+
+	
 
 		l(`up and running`);
 		l(sauce);
