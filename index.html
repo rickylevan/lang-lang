@@ -8,6 +8,11 @@
 </head>
 <body>
 	<script>
+		// SOURCE INSTRUCTION POINTER, i.e. which line are we on rn?
+		let SIP = 0;
+
+
+
 		// yessss
 		let l = (x) => {
 			console.log(x);
@@ -62,119 +67,99 @@
 
 		let performDataFunction = (line) => {
 
-			// not handling nested case yet
-			if (getFirstWord(line) == "fi") {
-				ICON = true;
-				console.log("FI", line);
-				return;
-			}
-
-
-
-			// first let's check if we're inside of code that we are ignoring
-			// because the if-check failed.
-			if (!ICON) { // we shall not pass...
-				console.log('In the darkness, no icon!!!');
-				if ("fi" == getFirstWord(line)) {
-					ICON = true;
-					l('Icon now set back to true, yayy!');
-				}
-				return;
-			}
-
-
-
-
+			// handle whitespace flab && comment lines
 			if (line.length == 0) {
-				// let's just do nothing for these nothing lines
+				l('Harmless lengthless line');
+				SIP++;
 				return;
+	
 			}
 			if (line[0] == '/' && line[1] == '/') {
 				l('Twas a comment!');
+				SIP++;
 				return;
 			}
 
-			if (getFirstWord(line) == "lp") {
-				console.log("LP", line);
-
-				let start = getNthWord(line, 1);
-				let nruns = getNthWord(line, 2);
-
-				LD++;
-				loop_idxes[LD] = start;
-				loop_rlens[LD] = nruns;
-
-				l(loop_idxes);
-				l(loop_rlens);
-				return;
-			}
-
-			if (getFirstWord(line) == "pl") {
-				console.log("PL", line);
-
-				// we need to do the loop actions, like:
-				// inc'ing idx and setting the instruction back
-				// continuing and popping off loop state
-
-				// Ohh yeah, so far I've been performDataFunction
-				// on the sauce lines just in a row, start to finish
-
-				// Once I generalize here, it might be more elegant (not
-				// fussing about cpu bound perf here) to have IF's 
-				// jump to the right spot, instead of "see non evil" 
-				// ignoring the code as they pass over it line by line.
-
-				// Let's not bite off more than you can chew now though.
 
 
+			let OP = getFirstWord(line)
 
 
-
-
-				return;
-
-
-			}
-
-
-
-			if (getFirstWord(line) == "if") {
-				console.log("IF", line);
-
-				// simple assumptions now for the win
-				let arg1 = getNthWord(line, 1);
-				let bob = getNthWord(line, 2); // bin op bool
-				let arg2 = getNthWord(line, 3);
-
-
-				if (!VALID_BOBS.includes(bob)) {
-					console.log('FAIL, unsupported bob:', bob);
+			// with no icon, we skip over code, unless we find a FI which
+			// tells us to switch back
+			if (!ICON) {
+				console.log('In the darkness, no icon!!!');
+				if (OP == "fi") {
+					ICON = true;
+					l('Icon now set back to true, yayy!');
 				}
-
-				let arg1int = getIntMeaning(arg1);
-				let arg2int = getIntMeaning(arg2);
-				/*l('youuuuuu');
-				l(arg1int);
-				l(arg2int);*/
-
-				if (bob == "==") {
-					IC = (arg1int == arg2int);
-					return;
-				}
-				if (bob == "!=") {
-					IC = (arg1int != arg2int);
-					return;
-				}
-
-
+				SIP++;
 				return;
 			}
 
 
 
+			switch(OP) {
 
-			
-			console.log("YA", line);
+				case "fi":
+					ICON = true;
+					console.log("FI", line);
+					break;
+
+				case "lp":
+					console.log("LP", line);
+
+					let start = getNthWord(line, 1);
+					let nruns = getNthWord(line, 2);
+
+					LD++;
+					loop_idxes[LD] = start;
+					loop_rlens[LD] = nruns;
+
+					l(loop_idxes);
+					l(loop_rlens);
+					break;
+
+				case "pl":
+					console.log("PL", line);
+					break;
+
+				case "if":
+					console.log("IF", line);
+
+					// simple assumptions now for the win
+					let arg1 = getNthWord(line, 1);
+					let bob = getNthWord(line, 2); // bin op bool
+					let arg2 = getNthWord(line, 3);
+
+
+					if (!VALID_BOBS.includes(bob)) {
+						console.log('FAIL, unsupported bob:', bob);
+					}
+
+					let arg1int = getIntMeaning(arg1);
+					let arg2int = getIntMeaning(arg2);
+
+					if (bob == "==") {
+						IC = (arg1int == arg2int);
+						break;
+					}
+					if (bob == "!=") {
+						IC = (arg1int != arg2int);
+						break;
+					}
+
+					break;
+
+
+				default:
+					console.log("YA", line);
+
+
+			}			
+
+			SIP++;
+
 		}
 			
 
@@ -198,8 +183,13 @@ pl`
 
 		sauceLines = sauce.split('\n');
 
-		for (let i = 0; i < sauceLines.length; i++) {
-			performDataFunction(sauceLines[i]);
+		while (true) {
+			if (SIP >= sauceLines.length || SIP < 0) {
+				l("SIP has fallen off the map, maybs cuz program finished");
+				break;
+
+			}
+			performDataFunction(sauceLines[SIP]);
 		}
 
 
