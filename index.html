@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+
+		// return string of first word
+		let getFirstWord = (line) => {
+			line = line.trimLeft();
+			let words = line.split(' ');
+			return words[0];
+		}
+
+		let performDataFunction = (line) => {
+			if (line.length == 0) {
+				// let's just do nothing for these nothing lines
+				return;
+			}
+			if (line[0] == '/' && line[1] == '/') {
+				console.log('Twas a comment!');
+				return;
+			}
+
+			if (getFirstWord(line) == "loop") {
+				console.log("LP", line);
+				return;
+			}
+			
+			console.log("YA", line);
+		}
+			
+
+
+		let sauce = `
+// SCREEN starts out all 0, all black
+
+loop 1, 100:
+	loop 1, 100:
+		if *idx* != **idx**:
+			#42 -> SCREEN[**idx**][*idx*]`
+
+		console.log(`up and running`);
+		console.log(sauce);
+
+
+		// oyy veyy, and now it begins
+		let loop_depth = 0;
+
+		sauceLines = sauce.split('\n');
+
+		for (let i = 0; i < sauceLines.length; i++) {
+			performDataFunction(sauceLines[i]);
+		}
+
+
+
+
+	</script>
+</body>
+</html>
