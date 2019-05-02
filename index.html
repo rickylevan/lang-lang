@@ -7,9 +7,58 @@
 	<title>Document</title>
 </head>
 <body>
+	<div id=top> </div>
 	<script>
+
+		// Refactor LATER! Here is a copy-paste of my JS table:
+
+		console.log('script says hiiii');
+		document.body.style.cursor = 'default';
+		cursorBox = [0,0]; // I know, keeping it simple atm
+		for (let i = 0; i < 30; i++) {
+			let mycol = document.createElement("div");
+			mycol.style = "display:flex;";
+			for (let j = 0; j < 30; j++) {
+				let mydiv = document.createElement("div");
+				// right then down the graphical convention
+				mydiv.id = j.toString() + "," + i.toString();
+				mydiv.style="height:20px;width:20px;background-color:rgb(0,50,80);"	
+				mycol.append(mydiv);
+			}
+			document.getElementById('top').append(mycol);
+		}
+
+
+
+		// ~~~ AND HERE NOW IS THE INTERPRETER ~~~
+
+
+		// glue connecting the two ~~~
+
+		// x and y are logically indexed by 1, starting from bottom left,
+		// first x across then y up. easy. This means tho some translations
+		// to an index-by-zero system that is right then down
+		let graphicalWrite = (x, y)  => {
+			// adjust for index convention
+			x--;
+			y--;
+
+			// 30 magic
+			y = 30 - y - 1;
+
+
+			let mydiv = document.getElementById(x.toString() + "," + y.toString());
+			// yes inelegant here we have to write out redundant style. Whatever
+			// this will be in webgl later anyway
+			mydiv.style="height:20px;width:20px;background-color:rgb(255,255,255);"
+		}
+
+
+
 		// SOURCE INSTRUCTION POINTER, i.e. which line are we on rn?
 		let SIP = 0;
+
+		let SKIP_SIP_INC = false;
 
 
 
@@ -27,7 +76,8 @@
 		// oyy veyy, and now it begins
 		let LD = -1; // LOOP-DEPTH. in first loop becomes 0 to point to *first* entry
 		let loop_idxes = [];
-		let loop_rlens = []; // run lengths
+		let loop_fail_spots = []; // run lengths
+		let loop_start_incs = []; // +1 of the loop starts, where to loop back to
 
 		// whether or not the if check is on, i.e. are we applying it?
 		let ICON = true;
@@ -98,6 +148,9 @@
 			}
 
 
+			console.log('curIdx:', loop_idxes[LD]);
+			console.log('failSpot:', loop_fail_spots[LD]);
+
 
 			switch(OP) {
 
@@ -109,20 +162,22 @@
 				case "lp":
 					console.log("LP", line);
 
-					let start = getNthWord(line, 1);
-					let nruns = getNthWord(line, 2);
+					let start = parseInt(getNthWord(line, 1));
+					let nruns = parseInt(getNthWord(line, 2));
 
 					LD++;
 					loop_idxes[LD] = start;
-					loop_rlens[LD] = nruns;
+					// so if we loop start 2 for 5 runs, we go thru
+					// 2,3,4,5,6 and then 7 is the spot of failure
+					loop_fail_spots[LD] = start + nruns;
+
+					loop_start_incs[LD] = SIP + 1;
 
 					l(loop_idxes);
-					l(loop_rlens);
+					l(loop_fail_spots);
 					break;
 
-				case "pl":
-					console.log("PL", line);
-					break;
+
 
 				case "if":
 					console.log("IF", line);
@@ -141,13 +196,64 @@
 					let arg2int = getIntMeaning(arg2);
 
 					if (bob == "==") {
-						IC = (arg1int == arg2int);
+						ICON = (arg1int == arg2int);
 						break;
 					}
 					if (bob == "!=") {
-						IC = (arg1int != arg2int);
+						ICON = (arg1int != arg2int);
 						break;
 					}
+
+					break;
+
+				case "pl":
+					// one of TWO things can happen here:
+					// 1) we continue and pop loop context
+					// or
+					// 2) we teleport to inc of loop start and inc counter
+					console.log("PL", line);
+
+					// if loop back
+
+					let curIdx = loop_idxes[LD];
+					let failSpot = loop_fail_spots[LD];
+
+
+
+					// if we are now to move forward, loop time over
+					if (curIdx >= failSpot-1) { // the -1 kind of a hack, loop counting
+						// XXX above hack might cause failure in trivial loop cases
+						//console.log("NOW:", curIdx, failSpot);
+						loop_idxes.pop();
+						loop_fail_spots.pop();
+						LD--;
+					} else {
+						whereToLoopBackTo = loop_start_incs[LD];
+						loop_idxes[LD]++;
+						SIP = whereToLoopBackTo
+
+						// yes, why ++ the loop start when we are already
+						// doing a SIP++ anyway? I judge it's too slick and
+						// pointlessly confusing.
+
+						SKIP_SIP_INC = true;
+					}
+
+					break;
+
+				case "cp":
+
+					let shade = getNthWord(line, 1);
+
+					let x = getIntMeaning("**idx**");
+					let y = getIntMeaning("*idx*");
+
+					console.log('Writing shade ', shade, 'to ', x, ',', y);
+
+					graphicalWrite(x, y);
+					
+
+
 
 					break;
 
@@ -158,7 +264,10 @@
 
 			}			
 
-			SIP++;
+			if (!SKIP_SIP_INC) {
+				SIP++;
+			}
+			SKIP_SIP_INC = false;
 
 		}
 			
@@ -167,10 +276,10 @@
 		let sauce = `
 // Screen S starts out all 0, all black
 
-lp 1 10
-	lp 5 20
-		if *idx* != **idx**
-			#42 -> S[**idx**][*idx*]
+lp 1 30
+	lp 1 30
+		if *idx* == **idx**
+			cp #42 S>**idx**>*idx*
 		fi
 	pl
 pl`
