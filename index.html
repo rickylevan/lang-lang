@@ -222,11 +222,12 @@
 
 					if (bob == "==") {
 						ICON = (arg1int == arg2int);
-						break;
-					}
-					if (bob == "!=") {
+					} else if (bob == "!=") {
 						ICON = (arg1int != arg2int);
-						break;
+					} else if (bob == "<") {
+						ICON = (arg1int < arg2int);
+					} else if (bob == ">") {
+						ICON = (arg1int > arg2int);
 					}
 
 					break;
@@ -293,8 +294,7 @@
 					let arg2 = getIntMeaning(getNthWord(line, 2));
 					let dest_name = getNthWord(line, 3);
 
-					let dest = arg1 + arg2;
-					GVARS[dest_name] = dest;
+					GVARS[dest_name] = arg1 + arg2;
 
 					break;
 
@@ -348,6 +348,9 @@
 lp 1 30
 	lp 1 30
 		rngi 50 myrand
+		if myrand < 20
+			add 20 myrand myrand
+		fi
 		sub 1 **idx** var1
 		if *idx* == var1
 			cp myrand S>**idx**>*idx*
