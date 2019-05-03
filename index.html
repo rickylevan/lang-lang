@@ -41,6 +41,12 @@ loop 1 30
   pool
 pool
 
+loop 2 5
+	cp %1 yval
+	add 10 yval yval
+	cp 24 S>%1>yval
+pool
+
 // moar
 `
 
@@ -551,15 +557,31 @@ pool
 				// XXX Hacks still cheating
 				case "cp": {
 
-					let shade = getIntMeaning(getNthWord(line, 1));
-
-					let x = getIntMeaning("%2");
-					let y = getIntMeaning("%1");
-
-					graphicalWrite(x, y, shade);
-					
+					let source = getIntMeaning(getNthWord(line, 1));
 
 
+					// XXX more hacks, let's just get something dirty working right away.
+					// We're going to steal `S` as magic for the screen. This could mean
+					// some special syntax highlight if it sticks.
+
+					/*let x = getIntMeaning("%2");
+					let y = getIntMeaning("%1");*/
+
+					let dest = getNthWord(line, 2);
+
+					// We are dealing with the special case of screen writing.
+					if (dest[0] == "S") {
+						let screen_items = dest.split(">");
+						let xval = getIntMeaning(screen_items[1]);
+						let yval = getIntMeaning(screen_items[2]);
+
+						graphicalWrite(xval, yval, source);
+						break;
+
+					}
+
+					// dealing with a normal copy
+					GVARS[dest] = source;
 
 					break;
 				}
