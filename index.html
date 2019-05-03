@@ -25,21 +25,23 @@
 // Screen starts out all 0
 
 loop 1 30
-	loop 1 30
-		rngi 50 myrand
-		if myrand < 20
-			add 30 myrand myrand
-		fi
-		sub 3 %2 var1
-		if %1 == var1
-			cp myrand S>%2>%1
-		fi
-		add 3 %2 var2
-		if %1 == var2
-			cp myrand S>%2>%1
-		fi
-	pool
-pool`
+  loop 1 30
+    rngi 50 m
+    if m < 20
+      add 30 m m
+    fi
+    sub 3 %2 var1
+    if %1 == var1
+      cp m S>%2>%1
+    fi
+    add 3 %2 var2
+    if %1 == var2
+      cp m S>%2>%1
+    fi
+  pool
+pool
+// moar
+`
 
 
 		
@@ -69,12 +71,37 @@ pool`
 		// contiguous (nowhitespace) string that would vary in syntax highlighting.
 		// So let's forget that for now. 
 		let color_liner = (line) => {
-			let words = line.split(' ');
+
+			// output is the list of simple character color pairs
+			let output = [];
+
+			let og_length = line.length;
+			let trimLine = line.trimLeft();
+
+			let whiteSpaceDiff = og_length - trimLine.length;
+
+
+			// write out preceding whitespace at the beginning
+			for (var i = 0; i < whiteSpaceDiff; i++) {
+				output.push({s: " ", c: Colors.WHITE});
+			}
+
+
+
+
+
+			let words = trimLine.split(' ');
 
 			// we'll build on this then deconstruct it in the output
 			let bubbles = [];
 
-			let op = words[0];
+
+
+			op = words[0];
+
+			console.log("WORDS is:", words);
+
+
 			switch (op) {
 				// loop is always 3 words, loop start span
 				case "loop": {
@@ -133,23 +160,27 @@ pool`
 				}
 
 				case "pool": {
-					bubbles.push({s: "pool", c: Colors.Silver});
+					bubbles.push({s: "pool", c: Colors.SILVER});
 					break;
 				}
 
 				case "fi": {
-					bubbles.push({s: "fi", c: Colors.Blue});
+					bubbles.push({s: "fi", c: Colors.BLUE});
 					break;
 				}
 
 
 				default: {
-					/// XXX just pushing straight white the rest
-					bubbles.push({s: line, c: Colors.WHITE});
+					// all the other operations
+					bubbles.push({s: op, c: Colors.GOLD});
+					words.shift();
+					for (let i = 0; i < words.length; i++) {
+						bubbles.push({s: words[i], c: Colors.WHITE});
+					}
 				}
 			}
 
-			let output = [];
+
 			for (let i = 0; i < bubbles.length; i++) {
 				for (let j = 0; j < bubbles[i].s.length; j++) {
 					output.push({s: bubbles[i].s[j], c: bubbles[i].c});
@@ -235,7 +266,7 @@ pool`
 					break;
 				}
 				case Colors.RED: {
-					cstring = "rgb(255, 0, 0)";
+					cstring = "rgb(180, 0, 0)";
 					break;
 				}
 
@@ -244,8 +275,18 @@ pool`
 					break;
 				}
 
+				case Colors.BLUE: {
+					cstring = "rgb(65, 105, 225)";
+					break;
+				}
+
+				case Colors.GOLD: {
+					cstring = "rgb(218,165,32)";
+					break;
+				}
+
 				default: {
-					cstring = "rgb(0,0,0)";
+					cstring = "rgb(255,255,255)";
 				}
 
 			}
@@ -279,6 +320,7 @@ pool`
 
 		for (let i = 0; i < sauceLines.length; i++) {
 			let colorChars = color_liner(sauceLines[i]);
+			console.log('On line', i, 'colorChars:', colorChars);
 			for (let j = 0; j < colorChars.length; j++) {
 				writeEditorColorChar(j+1, i+1, colorChars[j].s, colorChars[j].c);
 			}
