@@ -16,8 +16,13 @@
 	//document.getElementById('meta').style = "display:flex;";
 
 
+	// yessss
+	let l = (x) => {
+		console.log(x);
+	}
+
 	let sauce = `
-// Screen S starts out all 0, all black
+// Screen starts out all 0
 
 loop 1 30
 	loop 1 30
@@ -35,6 +40,13 @@ loop 1 30
 		fi
 	pool
 pool`
+
+
+		
+		l(`The sauce:`);
+		l(sauce);
+
+		let sauceLines = sauce.split('\n');
 
 		Colors = {
 			WHITE: "white",
@@ -184,19 +196,100 @@ pool`
 			for (let j = 0; j < 30; j++) {
 				let mydiv = document.createElement("div");
 				// right then down the graphical convention
-				mydiv.id = j.toString() + "," + i.toString();
-				mydiv.style="height:20px;width:20px;background-color:rgb(50,50,50);text-align:center;vertical-align:middle;line-height:20px;"
-				mydiv.innerHTML = "X";	
+				mydiv.id = j.toString() + ":" + i.toString();
+				mydiv.style="height:20px;width:20px;background-color:rgb(20,20,20);text-align:center;vertical-align:middle;line-height:20px;"
+				//mydiv.innerHTML = "X";	
 				mycol.append(mydiv);
 			}
 			document.getElementById('top').append(mycol);
 		}
 
 
+		let writeEditorColorChar = (x, y, char, color) => {
+
+			// it is GOOD to just copy, paste this right now!!!
+
+			// XXX for now let's just be graceful if out of range
+			if (x < 1 || x > 30) {
+				return;
+			}
+			if (y < 1 || y > 30) {
+				return;
+			}
+
+			// adjust for index convention
+			x--;
+			y--;
+
+			// 30 magic
+			y = 30 - y - 1;
+
+			let mydiv = document.getElementById(x.toString() + ":" + y.toString());
 
 
 
-		
+			let cstring = "";
+			switch (color) {
+				case Colors.WHITE: {
+					cstring = "rgb(255,255,255)";
+					break;
+				}
+				case Colors.RED: {
+					cstring = "rgb(255, 0, 0)";
+					break;
+				}
+
+				case Colors.SILVER: {
+					cstring = "rgb(200,200,200)";
+					break;
+				}
+
+				default: {
+					cstring = "rgb(0,0,0)";
+				}
+
+			}
+
+
+
+			mydiv.style = `height:20px;width:20px;color:${cstring};background-color:rgb(20,20,20);text-align:center;vertical-align:middle;line-height:20px;`;
+			mydiv.innerHTML = char;
+
+
+		}
+
+
+
+		// Now let's try writing colored letters to the screen
+		//let test = document.getElementById("15:5");
+		//test.style = "height:20px;width:20px;color:rgb(255,255,255);background-color:rgb(150,50,50);text-align:center;vertical-align:middle;line-height:20px;";
+
+
+		//writeEditorColorChar(4, 20, 'A', Colors.RED);
+
+
+		// now let's try writing out the whole first line
+		//let firstLoop = sauceLines[3];
+		//let colorChars = color_liner(firstLoop);
+
+
+		//writeEditorColorChar(1, 1, colorChars[0].s, colorChars[0].c);
+
+		//writeEditorColorChar(4, 4, 'O', Colors.SILVER);
+
+		for (let i = 0; i < sauceLines.length; i++) {
+			let colorChars = color_liner(sauceLines[i]);
+			for (let j = 0; j < colorChars.length; j++) {
+				writeEditorColorChar(j+1, i+1, colorChars[j].s, colorChars[j].c);
+			}
+		}
+
+
+
+
+
+
+
 
 
 
@@ -251,10 +344,7 @@ pool`
 
 
 
-		// yessss
-		let l = (x) => {
-			console.log(x);
-		}
+
 
 		// Guess what fools, all caps right now are used for certain big ass global
 		// variables as I feel like it, some are constant, some are not!
@@ -490,13 +580,11 @@ pool`
 
 	
 
-		l(`up and running`);
-		l(sauce);
 
 
 
 
-		sauceLines = sauce.split('\n');
+
 
 		while (true) {
 			if (SIP >= sauceLines.length || SIP < 0) {
