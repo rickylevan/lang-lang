@@ -30,16 +30,17 @@ loop 1 30
     if m < 20
       add 30 m m
     fi
-    sub 3 %2 var1
+    sub 2 %2 var1
     if %1 == var1
       cp m S>%2>%1
     fi
-    add 3 %2 var2
+    add 2 %2 var2
     if %1 == var2
       cp m S>%2>%1
     fi
   pool
 pool
+
 // moar
 `
 
@@ -228,7 +229,7 @@ pool
 				let mydiv = document.createElement("div");
 				// right then down the graphical convention
 				mydiv.id = j.toString() + ":" + i.toString();
-				mydiv.style="height:20px;width:20px;background-color:rgb(20,20,20);text-align:center;vertical-align:middle;line-height:20px;"
+				mydiv.style="height:20px;width:15px;background-color:rgb(20,20,20);text-align:center;vertical-align:middle;line-height:20px;"
 				//mydiv.innerHTML = "X";	
 				mycol.append(mydiv);
 			}
@@ -253,7 +254,7 @@ pool
 			y--;
 
 			// 30 magic
-			y = 30 - y - 1;
+			// XXX kill reverse skydiving y = 30 - y - 1;
 
 			let mydiv = document.getElementById(x.toString() + ":" + y.toString());
 
@@ -293,7 +294,7 @@ pool
 
 
 
-			mydiv.style = `height:20px;width:20px;color:${cstring};background-color:rgb(20,20,20);text-align:center;vertical-align:middle;line-height:20px;font-family:Arial;`;
+			mydiv.style = `height:20px;width:15px;color:${cstring};background-color:rgb(20,20,20);text-align:center;vertical-align:middle;line-height:20px;font-family:Arial;`;
 			mydiv.innerHTML = char;
 
 
