@@ -191,10 +191,10 @@
 			}
 
 			// hardwiring some magic next
-			if (blah == "*idx*") {
+			if (blah == "%1") {
 				return loop_idxes[LD];
 			}
-			if (blah == "**idx**") {
+			if (blah == "%2") {
 				return loop_idxes[LD-1];
 			}
 
@@ -256,7 +256,7 @@
 					break;
 				}
 
-				case "lp": {
+				case "loop": {
 					let start = parseInt(getNthWord(line, 1));
 					let nruns = parseInt(getNthWord(line, 2));
 
@@ -295,7 +295,7 @@
 					break;
 				}
 
-				case "pl": {
+				case "pool": {
 					// one of TWO things can happen here:
 					// 1) we continue and pop loop context
 					// or
@@ -331,8 +331,8 @@
 
 					let shade = getIntMeaning(getNthWord(line, 1));
 
-					let x = getIntMeaning("**idx**");
-					let y = getIntMeaning("*idx*");
+					let x = getIntMeaning("%2");
+					let y = getIntMeaning("%1");
 
 					graphicalWrite(x, y, shade);
 					
@@ -400,22 +400,22 @@
 		let sauce = `
 // Screen S starts out all 0, all black
 
-lp 1 30
-	lp 1 30
+loop 1 30
+	loop 1 30
 		rngi 50 myrand
 		if myrand < 20
 			add 20 myrand myrand
 		fi
-		sub 1 **idx** var1
-		if *idx* == var1
-			cp myrand S>**idx**>*idx*
+		sub 1 %2 var1
+		if %1 == var1
+			cp myrand S>%2>%1
 		fi
-		add 1 **idx** var2
-		if *idx* == var2
-			cp myrand S>**idx**>*idx*
+		add 1 %2 var2
+		if %1 == var2
+			cp myrand S>%2>%1
 		fi
-	pl
-pl`
+	pool
+pool`
 
 	
 
