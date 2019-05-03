@@ -70,7 +70,6 @@
 				}
 			}
 
-			console.log('numbubbles:', bubbles.length);
 			let output = [];
 			for (let i = 0; i < bubbles.length; i++) {
 				for (let j = 0; j < bubbles[i].s.length; j++) {
@@ -171,8 +170,6 @@
 		// Guess what fools, all caps right now are used for certain big ass global
 		// variables as I feel like it, some are constant, some are not!
 
-		// valid binary op to bools
-		let VALID_BOBS = ["!=", "=="];
 
 		// oyy veyy, and now it begins
 		let LD = -1; // LOOP-DEPTH. in first loop becomes 0 to point to *first* entry
@@ -244,31 +241,22 @@
 			// with no icon, we skip over code, unless we find a FI which
 			// tells us to switch back
 			if (!ICON) {
-				console.log('In the darkness, no icon!!!');
 				if (OP == "fi") {
 					ICON = true;
-					l('Icon now set back to true, yayy!');
 				}
 				SIP++;
 				return;
 			}
 
 
-			console.log('curIdx:', loop_idxes[LD]);
-			console.log('failSpot:', loop_fail_spots[LD]);
-
-
 			switch(OP) {
 
 				case "fi": {
 					ICON = true;
-					console.log("FI", line);
 					break;
 				}
 
 				case "lp": {
-					console.log("LP", line);
-
 					let start = parseInt(getNthWord(line, 1));
 					let nruns = parseInt(getNthWord(line, 2));
 
@@ -280,24 +268,16 @@
 
 					loop_start_incs[LD] = SIP + 1;
 
-					l(loop_idxes);
-					l(loop_fail_spots);
 					break;
 				}
 
 
 				case "if": {
-					console.log("IF", line);
-
 					// simple assumptions now for the win
 					let arg1 = getNthWord(line, 1);
 					let bob = getNthWord(line, 2); // bin op bool
 					let arg2 = getNthWord(line, 3);
 
-
-					if (!VALID_BOBS.includes(bob)) {
-						console.log('FAIL, unsupported bob:', bob);
-					}
 
 					let arg1int = getIntMeaning(arg1);
 					let arg2int = getIntMeaning(arg2);
@@ -320,14 +300,9 @@
 					// 1) we continue and pop loop context
 					// or
 					// 2) we teleport to inc of loop start and inc counter
-					console.log("PL", line);
-
-					// if loop back
 
 					let curIdx = loop_idxes[LD];
 					let failSpot = loop_fail_spots[LD];
-
-
 
 					// if we are now to move forward, loop time over
 					if (curIdx >= failSpot-1) { // the -1 kind of a hack, loop counting
@@ -358,8 +333,6 @@
 
 					let x = getIntMeaning("**idx**");
 					let y = getIntMeaning("*idx*");
-
-					console.log('Writing shade ', shade, 'to ', x, ',', y);
 
 					graphicalWrite(x, y, shade);
 					
@@ -409,7 +382,7 @@
 
 
 				default: {
-					console.log("YA", line);
+					console.log("Unsupported op:", line);
 				}
 
 
