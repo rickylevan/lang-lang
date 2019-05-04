@@ -53,14 +53,6 @@ pool
 // moar
 `
 
-/*loop 2 5
-	cp %1 yval
-	add 10 yval yval
-	cp 24 S>%1>yval
-pool
-
-// moar */
-
 
 
 		
@@ -68,6 +60,30 @@ pool
 		l(sauce);
 
 		let sauceLines = sauce.split('\n');
+
+
+
+		// let's add in router tags. This will mean a pre-sweep over the sauce for
+		// these tags, which is a break--having that pre-sweep. But without it, 
+		// we'd have to run the handler code *before* the route is even set up, which
+		// isn't what we want.
+
+		let routerTagMap = {};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		Colors = {
 			WHITE: "white",
