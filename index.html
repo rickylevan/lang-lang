@@ -51,8 +51,6 @@ cp grey S>x>y
 
 stop
 
-// a lot of redundancy
-// but let's get a simple thing working
 
 cp 1 state :: rightHandle
 stop
@@ -70,20 +68,17 @@ black :: blinkHandle
 
 if state == 1
   add 1 x x
-  cp grey S>x>y
 fi
 if state == 2
   sub 1 x x
-  cp grey S>x>y
 fi
 if state == 3
   add 1 y y
-  cp grey S>x>y
 fi
 if state == 4
   sub 1 y y
-  cp grey S>x>y
 fi
+cp grey S>x>y
 
 stop
   
@@ -818,7 +813,7 @@ stop
 					if (event == "~blink~") {
 						setInterval(() => {
 							eventHandler("~blink~");
-						}, 200); // hardwired 1 sec now
+						}, 200); // hardwired 1/5 sec now
 					}
 
 
