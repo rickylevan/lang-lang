@@ -38,10 +38,14 @@ route ArrowRight rightHandle
 route ArrowUp upHandle
 route ArrowDown downHandle
 
+route ~blink~ blinkHandle
+
 cp 35 grey
 
 cp 1 x
 cp 1 y
+
+cp 1 state
 
 cp grey S>x>y
 
@@ -50,25 +54,44 @@ stop
 // a lot of redundancy
 // but let's get a simple thing working
 
-black :: rightHandle
-add 1 x x
-cp grey S>x>y
+cp 1 state :: rightHandle
 stop
 
-black :: leftHandle
-sub 1 x x
-cp grey S>x>y
+cp 2 state :: leftHandle
 stop
 
-black :: upHandle
-add 1 y y
-cp grey S>x>y
+cp 3 state :: upHandle
 stop
 
-black :: downHandle
-sub 1 y y
-cp grey S>x>y
+cp 4 state :: downHandle
 stop
+
+black :: blinkHandle
+
+if state == 1
+  add 1 x x
+  cp grey S>x>y
+fi
+if state == 2
+  sub 1 x x
+  cp grey S>x>y
+fi
+if state == 3
+  add 1 y y
+  cp grey S>x>y
+fi
+if state == 4
+  sub 1 y y
+  cp grey S>x>y
+fi
+
+stop
+  
+
+
+
+
+
 `
 
 
@@ -525,6 +548,60 @@ stop
 			return getNthWord(line, 0);
 		}
 
+
+
+
+
+	let coreLoop = () => {
+
+		while (true) {
+			if (SIP >= sauceLines.length || SIP < 0) {
+				l("SIP has fallen off the map, maybs cuz program finished");
+				break;
+
+			}
+			let out = performDataFunction(sauceLines[SIP]);
+			if (out == "break") {
+				break;
+			}
+		}
+	}
+
+
+	let eventHandler = (event) => {
+
+	    // should be garbage now: let event = e.key;
+	    let tag = ROUTER_MAP[event];
+	    if (!tag) {
+	    	console.log('Event ', event, ' has no handling route!');
+	    	return;
+	    }
+
+	    let lineNum = ROUTER_TAG_MAP[tag];
+	    if (!lineNum) {
+	    	console.log('Tag ', tag, ' is not defined at any line.');
+	    }
+
+	    // XXX something hacky now that could totally run into multithreading issues
+	    // and yes, JS is multithreaded
+
+	    SIP = lineNum;
+	    coreLoop();
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 		let performDataFunction = (line) => {
 
 			// handle whitespace flab && comment lines
@@ -737,6 +814,13 @@ stop
 
 					ROUTER_MAP[event] = handlerTag;
 
+					// this special route establishes things happening in time
+					if (event == "~blink~") {
+						setInterval(() => {
+							eventHandler("~blink~");
+						}, 200); // hardwired 1 sec now
+					}
+
 
 					break;
 				}
@@ -761,71 +845,11 @@ stop
 
 
 
-		let coreLoop = () => {
-
-			while (true) {
-				if (SIP >= sauceLines.length || SIP < 0) {
-					l("SIP has fallen off the map, maybs cuz program finished");
-					break;
-
-				}
-				let out = performDataFunction(sauceLines[SIP]);
-				if (out == "break") {
-					break;
-				}
-			}
-		}
 
 
-
-	document.addEventListener('keydown', (function (e) {
-	    /*switch(e.key) {
-	        case "ArrowLeft":
-	            snakeNextDir = "left";
-	            break;
-	        case "ArrowUp":
-	            snakeNextDir = "up";
-	            break;
-	        case "ArrowRight":
-	            snakeNextDir = "right";
-	            break;
-	        case "ArrowDown":
-	            snakeNextDir = "down";
-	            break;
-	    }*/
-
-	    let event = e.key;
-	    let tag = ROUTER_MAP[event];
-	    if (!tag) {
-	    	console.log('Event ', event, ' has no handling route!');
-	    	return;
-	    }
-
-	    let lineNum = ROUTER_TAG_MAP[tag];
-	    if (!lineNum) {
-	    	console.log('Tag ', tag, ' is not defined at any line.');
-	    }
-
-	    // XXX something hacky now that could totally run into multithreading issues
-	    // and yes, JS is multithreaded
-
-	    SIP = lineNum;
-	    coreLoop();
-
-
-
-	}));
-
-
-
-
-
-
-
-
-
-
-
+	document.addEventListener('keydown', (e) => {
+		eventHandler(e.key)
+	});
 
 
 
