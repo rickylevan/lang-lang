@@ -16,41 +16,59 @@
 	//document.getElementById('meta').style = "display:flex;";
 
 
+
+
+
+
+
+
+
 	// yessss
 	let l = (x) => {
 		console.log(x);
 	}
 
 	let sauce = `
-// Screen starts out all 0
 
-cp 0 diff
-loop 1 200
-black
-loop 1 30
-  loop 1 30
-    rngi 50 m
-    if m < 20
-      add 30 m m
-    fi
-    sub diff %2 var1
-    if %1 == var1
-      cp m S>%2>%1
-    fi
-    add diff %2 var2
-    if %1 == var2
-      cp m S>%2>%1
-    fi
-  pool
-pool
-add 1 diff diff
-if diff == 30
-	cp 0 diff
-fi
-sleep
-pool
+// basic moving of gray square with arrow keys
+// ...ya, the ~route ArrowLeft~ alone as sugar could be cool, later
 
-// moar
+route ArrowLeft leftHandle
+route ArrowRight rightHandle
+route ArrowUp upHandle
+route ArrowDown downHandle
+
+cp 35 grey
+
+cp 1 x
+cp 1 y
+
+cp grey S>x>y
+
+stop
+
+// a lot of redundancy
+// but let's get a simple thing working
+
+black :: rightHandle
+add 1 x x
+cp grey S>x>y
+stop
+
+black :: leftHandle
+sub 1 x x
+cp grey S>x>y
+stop
+
+black :: upHandle
+add 1 y y
+cp grey S>x>y
+stop
+
+black :: downHandle
+sub 1 y y
+cp grey S>x>y
+stop
 `
 
 
@@ -68,18 +86,50 @@ pool
 		// we'd have to run the handler code *before* the route is even set up, which
 		// isn't what we want.
 
-		let routerTagMap = {};
+		// this maps tag strings to line numbers
+		let ROUTER_TAG_MAP = {};
+
+
+		// this maps unique event id strings to tag strings
+		let ROUTER_MAP = {};
 
 
 
 
+		// this general approach might not work later if we want to interpolate 
+		// "function calls" in between, then the numbering will get messed up. But
+		// this is something simple to explore to get routing off the ground
+		let buildRTM = () => {
+
+			for (let i = 0; i < sauceLines.length; i++) {
+				let line = sauceLines[i];
+			
+
+				let words = line.split(' ');
+				let colonIdx = words.indexOf('::');
+
+				//console.log('line is:', line);
+				//console.log('colon idx is:', colonIdx);
+
+				// if '::' not found, there's no router tag to add
+				if (colonIdx < 0) {
+					continue;
+				}
+
+				// kinda hacky we're just going to assume now playing nice, :: at end
+
+				// saving line number of where we find a given router tag. 
+				// (calling them router tags for now cuz rn only router will be using them)
+				ROUTER_TAG_MAP[words[colonIdx+1]] = i;
+
+
+			}	
 
 
 
+		}
 
-
-
-
+		buildRTM();
 
 
 
@@ -255,7 +305,7 @@ pool
 
 		// a copy now to get a grid for writing text in, just getting the rendering up
 		cursorBox = [0,0]; // I know, keeping it simple atm
-		for (let i = 0; i < 30; i++) {
+		/*for (let i = 0; i < 30; i++) {
 			let mycol = document.createElement("div");
 			mycol.style = "display:flex;";
 			for (let j = 0; j < 30; j++) {
@@ -267,7 +317,7 @@ pool
 				mycol.append(mydiv);
 			}
 			document.getElementById('top').append(mycol);
-		}
+		}*/
 
 
 		let writeEditorColorChar = (x, y, char, color) => {
@@ -352,12 +402,15 @@ pool
 
 		//writeEditorColorChar(4, 4, 'O', Colors.SILVER);
 
-		for (let i = 0; i < sauceLines.length; i++) {
+
+		// THIS CODE MATTERS, but let's remove the sauce for now, taking up space 
+		// as distraction
+		/*for (let i = 0; i < sauceLines.length; i++) {
 			let colorChars = color_liner(sauceLines[i]);
 			for (let j = 0; j < colorChars.length; j++) {
 				writeEditorColorChar(j+1, i+1, colorChars[j].s, colorChars[j].c);
 			}
-		}
+		}*/
 
 
 
@@ -658,12 +711,32 @@ pool
 					return "break";
 				}
 
+				// XXX horrible shitty stop, must fix
+				case "stop": {
+					// do NOT SIP++, and return, so it's just this
+					// instruction over and over
+					setTimeout(function() {
+						coreLoop();
+					}, 1000000); // lol
+					return "break";
+				}
+
 				case "black": {
 					for (let i = 0; i < 30; i++) {
 						for (let j = 0; j < 30; j++) {
 							graphicalWrite(i+1, j+1, 0); // write black
 						}
 					}
+
+					break;
+				}
+
+				case "route": {
+					let event = getNthWord(line, 1);
+					let handlerTag = getNthWord(line, 2);
+
+					ROUTER_MAP[event] = handlerTag;
+
 
 					break;
 				}
@@ -702,6 +775,62 @@ pool
 				}
 			}
 		}
+
+
+
+	document.addEventListener('keydown', (function (e) {
+	    /*switch(e.key) {
+	        case "ArrowLeft":
+	            snakeNextDir = "left";
+	            break;
+	        case "ArrowUp":
+	            snakeNextDir = "up";
+	            break;
+	        case "ArrowRight":
+	            snakeNextDir = "right";
+	            break;
+	        case "ArrowDown":
+	            snakeNextDir = "down";
+	            break;
+	    }*/
+
+	    let event = e.key;
+	    let tag = ROUTER_MAP[event];
+	    if (!tag) {
+	    	console.log('Event ', event, ' has no handling route!');
+	    	return;
+	    }
+
+	    let lineNum = ROUTER_TAG_MAP[tag];
+	    if (!lineNum) {
+	    	console.log('Tag ', tag, ' is not defined at any line.');
+	    }
+
+	    // XXX something hacky now that could totally run into multithreading issues
+	    // and yes, JS is multithreaded
+
+	    SIP = lineNum;
+	    coreLoop();
+
+
+
+	}));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		coreLoop();
 
