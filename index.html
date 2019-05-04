@@ -25,7 +25,7 @@
 // Screen starts out all 0
 
 cp 0 diff
-loop 1 20
+loop 1 200
 black
 loop 1 30
   loop 1 30
@@ -44,6 +44,9 @@ loop 1 30
   pool
 pool
 add 1 diff diff
+if diff == 30
+	cp 0 diff
+fi
 sleep
 pool
 
@@ -646,6 +649,7 @@ pool
 						}
 					}
 
+					break;
 				}
 
 
