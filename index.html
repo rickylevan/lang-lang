@@ -25,6 +25,7 @@
 // Screen starts out all 0
 
 loop 1 30
+sleep
   loop 1 30
     rngi 50 m
     if m < 20
@@ -624,6 +625,17 @@ pool
 					break;
 				}
 
+				case "sleep": {
+					console.log("sleep called!!!");
+					SIP++;
+					setTimeout(function() {
+						coreLoop();
+					}, 1000);
+					return "break";
+				}
+
+
+
 
 				default: {
 					console.log("Unsupported op:", line);
@@ -638,27 +650,26 @@ pool
 			SKIP_SIP_INC = false;
 
 		}
-			
+		
 
 
 
+		let coreLoop = () => {
 
-	
+			while (true) {
+				if (SIP >= sauceLines.length || SIP < 0) {
+					l("SIP has fallen off the map, maybs cuz program finished");
+					break;
 
-
-
-
-
-
-
-		while (true) {
-			if (SIP >= sauceLines.length || SIP < 0) {
-				l("SIP has fallen off the map, maybs cuz program finished");
-				break;
-
+				}
+				let out = performDataFunction(sauceLines[SIP]);
+				if (out == "break") {
+					break;
+				}
 			}
-			performDataFunction(sauceLines[SIP]);
 		}
+
+		coreLoop();
 
 
 
