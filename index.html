@@ -28,8 +28,15 @@
 		console.log(x);
 	}
 
+	let sauce = `
+mov 4 a
+mov 5 /a/
 
-	let sauce2 = `
+
+`
+
+
+	let sauce3 = `
 mov 150 grey
 
 mov 7 snk.1.x
@@ -76,7 +83,7 @@ pool
 
 `
 
-	let sauce = `
+	let sauce2 = `
 
 // basic moving of gray square with arrow keys
 // ...ya, the ~route ArrowLeft~ alone as sugar could be cool, later
@@ -897,8 +904,22 @@ stop
 
 					// handling the non-graphical case now
 
-					let items = dest.split('.');
-					// direct easy hack
+
+					// hmm, what if I just directly expand out items now
+					let basic_items = dest.split('.');
+
+					let items = [];
+					for (let i = 0; i < basic_items.length; i++) {
+						let bi = basic_items[i];
+						if (bi[0] == '/' && bi[bi.length-1] == '/') {
+							let unslash = bi.slice(1, bi.length-1);
+							items.push(getIntMeaning(unslash));
+						} else {
+							items.push(bi);
+						}
+					}
+
+
 
 					if (items.length == 1) {
 						GS[items[0]] = source;
