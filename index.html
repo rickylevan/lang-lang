@@ -788,7 +788,29 @@ stop
 				// XXX Hacks still cheating
 				case "cp": {
 
+					let raw_source = getNthWord(line, 1);
 					let source = getIntMeaning(getNthWord(line, 1));
+
+					let raw_source_split = raw_source.split('.');
+
+					// kill source on global scope, to give us move semantics
+					// the source is frozen now, we already know it. Here's a
+					// closure to delete in when we're ready.
+					let killSourceOnGS = () => {
+
+						// let's hack this out case by case before loop
+
+						if (raw_source_split.length == 1) {
+							delete GS[raw_source_split[0]];
+						} else if (raw_source_split.length == 2) {
+							delete GS[raw_source_split[0]][raw_source_split[1]];
+						} else {
+							delete GS[raw_source_split[0]][raw_source_split[1]][raw_source_split[2]];
+						}
+
+
+
+					}
 
 
 					let dest = getNthWord(line, 2);
@@ -811,6 +833,7 @@ stop
 
 					if (items.length == 1) {
 						GS[items[0]] = source;
+						killSourceOnGS();
 						break;
 					}
 
@@ -821,6 +844,7 @@ stop
 							GS[items[0]] = {};
 						}
 						GS[items[0]][items[1]] = source;
+						killSourceOnGS();
 						break;
 					}
 
@@ -832,6 +856,7 @@ stop
 							GS[items[0]][items[1]] = {};
 						}
 						GS[items[0]][items[1]][items[2]] = source;
+						killSourceOnGS();
 						break;
 					}
 
