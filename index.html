@@ -30,19 +30,49 @@
 
 
 	let sauce = `
-cp 4 snk.1.x
-cp 5 snk.1.y
+mov 35 grey
 
-cp 6 snk.2.x
-cp 7 snk.2.y
+mov 7 snk.1.x
+mov 7 snk.1.y
+mov 6 snk.2.x
+mov 6 snk.2.y
+mov 5 snk.3.x
+mov 5 snk.3.y
 
-cp 8 snk.3.x
-cp 9 snk.3.y
+loop
 
-cp snk.2 snk.3
-cp snk.1 snk.2
-cp 20 snk.1.x
-cp 21 snk.1.y
+black
+
+// not sure yet if add takes world tree addresses
+cp snk.1.x newX
+cp snk.1.y newY
+
+add 1 newX newX
+add 1 newY newY
+
+// hehe and now we can destroy names we don't need
+mov newX snk.head.x
+mov newY snk.head.y
+
+mov snk.2 snk.3
+mov snk.1 snk.2
+mov snk.head snk.1
+
+cp snk.1.x a
+cp snk.1.y b
+cp snk.2.x c
+cp snk.2.y d
+cp snk.3.x e
+cp snk.3.y f
+
+cp grey S>a>b
+cp grey S>c>d
+cp grey S>e>f
+
+sleep
+
+
+pool
 
 `
 
@@ -707,6 +737,7 @@ stop
 				return;
 			}
 
+			let moveSemanticsOn = false;
 
 			switch(OP) {
 
@@ -785,6 +816,14 @@ stop
 					break;
 				}
 
+				// can we maybe hack with not using break and just falling down?
+
+				case "mov": {
+					moveSemanticsOn = true;
+
+					// hehehe no break, woooo
+				}
+
 				// XXX Hacks still cheating
 				case "cp": {
 
@@ -798,6 +837,10 @@ stop
 					// closure to delete in when we're ready.
 					let killSourceOnGS = () => {
 
+						if (!moveSemanticsOn) {
+							return;
+						}
+
 						// let's hack this out case by case before loop
 
 						if (raw_source_split.length == 1) {
@@ -807,7 +850,6 @@ stop
 						} else {
 							delete GS[raw_source_split[0]][raw_source_split[1]][raw_source_split[2]];
 						}
-
 
 
 					}
@@ -907,7 +949,7 @@ stop
 					SIP++;
 					setTimeout(function() {
 						coreLoop();
-					}, 100);
+					}, 1000);
 					return "break";
 				}
 
