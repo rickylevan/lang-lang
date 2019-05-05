@@ -29,8 +29,16 @@
 	}
 
 	let sauce = `
-mov 4 a
-mov 5 /a/
+mov 3 snk.1.x
+mov 3 snk.1.y
+mov 5 snk
+
+mov 3 a
+
+loop 1 4
+  draw 180 a a
+  add 1 a a
+pool
 
 
 `
@@ -72,9 +80,9 @@ cp snk.2.y d
 cp snk.3.x e
 cp snk.3.y f
 
-cp grey S>a>b
-cp grey S>c>d
-cp grey S>e>f
+draw grey a b
+draw grey c d
+draw grey e f
 
 sleep
 
@@ -108,7 +116,9 @@ mov 180 grey
 
 //loop 1 10
 //  add 1 %1 a
-//  cp grey S>snk./%1/.x>snk./%1/.y
+//  draw grey snk./%1/.x snk./%1/.y
+
+// XXX old garbage draw format
 // cp grey S>snk.1.x>snk.1.y
 // cp grey S>snk.2.x>snk.2.y
 // cp grey S>snk.3.x>snk.3.y
@@ -119,7 +129,7 @@ mov 180 grey
 loop 1 5
   mov %1 snk./%1/.x
   mov 1  snk./%1/.y
-  cp grey S>snk./%1/.x>snk./%1/.y
+  draw grey snk./%1/.x snk./%1/.y
 pool
 
 
@@ -168,9 +178,9 @@ mov snk.2 snk.3
 mov snk.1 snk.2
 mov snk.head snk.1
 
-cp grey S>snk.1.x>snk.1.y
-cp grey S>snk.2.x>snk.2.y
-cp grey S>snk.3.x>snk.3.y
+draw grey snk.1.x snk.1.y
+draw grey snk.2.x snk.2.y
+draw grey snk.3.x snk.3.y
 
 
 
@@ -891,20 +901,6 @@ stop
 
 					let dest = getNthWord(line, 2);
 
-					// yolo if dest starts with "S>" write to screen
-					if (dest[0] == "S" && dest[1] == ">") {
-						let screen_items = dest.split(">");
-						let xval = getIntMeaning(screen_items[1]);
-						let yval = getIntMeaning(screen_items[2]);
-
-						graphicalWrite(xval, yval, source);
-						break;
-
-					}
-
-					// handling the non-graphical case now
-
-
 					// hmm, what if I just directly expand out items now
 					let basic_items = dest.split('.');
 
@@ -1041,6 +1037,18 @@ stop
 				case "log": {
 
 					console.log(line);
+
+					break;
+				}
+
+				case "draw": {
+
+					let shade = getIntMeaning(getNthWord(line, 1));
+					let x = getIntMeaning(getNthWord(line, 2));
+					let y = getIntMeaning(getNthWord(line, 3));
+
+					graphicalWrite(x, y, shade);
+
 
 					break;
 				}
