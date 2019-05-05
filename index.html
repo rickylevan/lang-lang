@@ -28,7 +28,25 @@
 		console.log(x);
 	}
 
+
 	let sauce = `
+cp 4 snk.1.x
+cp 5 snk.1.y
+
+cp 6 snk.2.x
+cp 7 snk.2.y
+
+cp 8 snk.3.x
+cp 9 snk.3.y
+
+cp snk.2 snk.3
+cp snk.1 snk.2
+cp 20 snk.1.x
+cp 21 snk.1.y
+
+`
+
+	let sauce2 = `
 
 // basic moving of gray square with arrow keys
 // ...ya, the ~route ArrowLeft~ alone as sugar could be cool, later
@@ -42,12 +60,29 @@ route ~blink~ blinkHandle
 
 cp 35 grey
 
-cp 1 x
-cp 1 y
+// one is the head of snake, block furthest right
+cp 3 snk.1.x
+cp 1 snk.1.y
+cp 2 snk.2.x
+cp 1 snk.2.y
+cp 1 snk.3.x
+cp 1 snk.3.y
+
+cp snk.1.x a
+cp snk.1.y b
+cp snk.2.x c
+cp snk.2.y d
+cp snk.3.x e
+cp snk.3.y f
+
+cp grey S>a>b
+cp grey S>c>d
+cp grey S>e>f
+
+
+
 
 cp 1 state
-
-cp grey S>x>y
 
 stop
 
@@ -66,6 +101,10 @@ stop
 
 black :: blinkHandle
 
+// let us get head values
+cp snk.1.x x
+cp snk.1.y y
+
 if state == 1
   add 1 x x
 fi
@@ -78,7 +117,32 @@ fi
 if state == 4
   sub 1 y y
 fi
-cp grey S>x>y
+
+// now let's set the new head
+cp x snk.head.x
+cp y snk.head.y
+
+// XXX make sure GC will do right thing
+// without needing a manual free
+
+cp snk.2 snk.3
+cp snk.1 snk.2
+cp snk.head snk.1
+
+// doing this tedious first, easier
+cp snk.1.x a
+cp snk.1.y b
+cp snk.2.x c
+cp snk.2.y d
+cp snk.3.x e
+cp snk.3.y f
+
+cp grey S>a>b
+cp grey S>c>d
+cp grey S>e>f
+
+
+
 
 stop
   
@@ -486,7 +550,7 @@ stop
 		let SKIP_SIP_INC = false;
 
 
-		let GVARS = {};
+		let GS = {};
 
 
 
@@ -515,7 +579,25 @@ stop
 				return n;
 			}
 
-			// hardwiring some magic next
+			let items = blah.split('.');
+			let x = {};
+			for (let i = 0; i < items.length; i++) {
+				let item = items[i];
+
+				if (i == 0) {
+					x = GS[item];
+				} else {
+					x = x[item];
+				}
+			}
+
+			return x;
+
+
+
+
+
+			/*// hardwiring some magic next
 			if (blah == "%1") {
 				return loop_idxes[LD];
 			}
@@ -523,10 +605,10 @@ stop
 				return loop_idxes[LD-1];
 			}
 
-			let maybsVal = GVARS[blah];
+			let maybsVal = GS[blah];
 			if (maybsVal != undefined) {
 				return maybsVal;
-			}
+			}*/
 
 		}
 
@@ -601,13 +683,11 @@ stop
 
 			// handle whitespace flab && comment lines
 			if (line.length == 0) {
-				l('Harmless lengthless line');
 				SIP++;
 				return;
 	
 			}
 			if (line[0] == '/' && line[1] == '/') {
-				l('Twas a comment!');
 				SIP++;
 				return;
 			}
@@ -711,17 +791,10 @@ stop
 					let source = getIntMeaning(getNthWord(line, 1));
 
 
-					// XXX more hacks, let's just get something dirty working right away.
-					// We're going to steal `S` as magic for the screen. This could mean
-					// some special syntax highlight if it sticks.
-
-					/*let x = getIntMeaning("%2");
-					let y = getIntMeaning("%1");*/
-
 					let dest = getNthWord(line, 2);
 
-					// We are dealing with the special case of screen writing.
-					if (dest[0] == "S") {
+					// yolo if dest starts with "S>" write to screen
+					if (dest[0] == "S" && dest[1] == ">") {
 						let screen_items = dest.split(">");
 						let xval = getIntMeaning(screen_items[1]);
 						let yval = getIntMeaning(screen_items[2]);
@@ -731,10 +804,40 @@ stop
 
 					}
 
-					// dealing with a normal copy
-					GVARS[dest] = source;
+					// handling the non-graphical case now
+
+					let items = dest.split('.');
+					// direct easy hack
+
+					if (items.length == 1) {
+						GS[items[0]] = source;
+						break;
+					}
+
+
+					// XXX just rapid hacking, haven't verified if this is right
+					if (items.length == 2) {
+						if (GS[items[0]] == undefined) {
+							GS[items[0]] = {};
+						}
+						GS[items[0]][items[1]] = source;
+						break;
+					}
+
+					if (items.length == 3) {
+						if (GS[items[0]] == undefined) {
+							GS[items[0]] = {};
+						}
+						if (GS[items[0]][items[1]] == undefined) {
+							GS[items[0]][items[1]] = {};
+						}
+						GS[items[0]][items[1]][items[2]] = source;
+						break;
+					}
 
 					break;
+
+
 				}
 
 				case "add": {
@@ -744,7 +847,7 @@ stop
 					let arg2 = getIntMeaning(getNthWord(line, 2));
 					let dest_name = getNthWord(line, 3);
 
-					GVARS[dest_name] = arg1 + arg2;
+					GS[dest_name] = arg1 + arg2;
 
 					break;
 
@@ -758,7 +861,7 @@ stop
 
 					// MWAHAHAHA subtract first arg from second arg
 					let dest = arg2 - arg1;
-					GVARS[dest_name] = dest;
+					GS[dest_name] = dest;
 
 					break;
 
@@ -769,7 +872,7 @@ stop
 					let arg1 = getIntMeaning(getNthWord(line, 1));
 					let dest_name = getNthWord(line, 2);
 					// + 1 for index by 1
-					GVARS[dest_name] = Math.floor(Math.random()*arg1) + 1;
+					GS[dest_name] = Math.floor(Math.random()*arg1) + 1;
 
 
 					break;
@@ -813,7 +916,7 @@ stop
 					if (event == "~blink~") {
 						setInterval(() => {
 							eventHandler("~blink~");
-						}, 200); // hardwired 1/5 sec now
+						}, 1000); // hardwired 1/5 sec now
 					}
 
 
