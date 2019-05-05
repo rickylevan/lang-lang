@@ -32,8 +32,35 @@
 
 loop 1 5
   mov %1 snk./%1/.x
-//  mov %1 %1
+  mov %1 snk./%1/.y
+  draw 180 snk./%1/.x snk./%1/.y
 pool
+
+mov 20 snk.5.x
+mov 20 snk.5.y
+draw 180 snk.5.x snk.5.y
+
+route ~blink~ blinkHandle
+
+// :: blinkHandle
+log youuuu
+
+// hack for now
+sub 1 snk.5.x a
+sub 1 snk.5.y b
+
+mov a snk.5.x
+mov b snk.5.y
+
+
+
+draw 180 snk.5.x snk.5.y
+
+
+
+
+stop
+
 
 
 `
@@ -98,23 +125,12 @@ route ArrowDown downHandle
 
 route ~blink~ blinkHandle
 
-mov 180 grey
-
-// one is the head of snake, block furthest right
-//  mov 3 snk.1.x
-//  mov 1 snk.1.y
-//  mov 2 snk.2.x
-//  mov 1 snk.2.y
-//  mov 1 snk.3.x
-//  mov 1 snk.3.y
-
-
 
 // this is reversey, want snake going out right, oh well
 loop 1 5
   mov %1 snk./%1/.x
   mov 1  snk./%1/.y
-  draw grey snk./%1/.x snk./%1/.y
+  draw 180 snk./%1/.x snk./%1/.y
 pool
 
 
@@ -163,9 +179,9 @@ mov snk.2 snk.3
 mov snk.1 snk.2
 mov snk.head snk.1
 
-draw grey snk.1.x snk.1.y
-draw grey snk.2.x snk.2.y
-draw grey snk.3.x snk.3.y
+draw 180 snk.1.x snk.1.y
+draw 180 snk.2.x snk.2.y
+draw 180 snk.3.x snk.3.y
 
 
 
