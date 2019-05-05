@@ -29,7 +29,7 @@
 	}
 
 
-	let sauce = `
+	let sauce2 = `
 mov 35 grey
 
 mov 7 snk.1.x
@@ -76,7 +76,7 @@ pool
 
 `
 
-	let sauce2 = `
+	let sauce = `
 
 // basic moving of gray square with arrow keys
 // ...ya, the ~route ArrowLeft~ alone as sugar could be cool, later
@@ -88,15 +88,15 @@ route ArrowDown downHandle
 
 route ~blink~ blinkHandle
 
-cp 35 grey
+mov 35 grey
 
 // one is the head of snake, block furthest right
-cp 3 snk.1.x
-cp 1 snk.1.y
-cp 2 snk.2.x
-cp 1 snk.2.y
-cp 1 snk.3.x
-cp 1 snk.3.y
+mov 3 snk.1.x
+mov 1 snk.1.y
+mov 2 snk.2.x
+mov 1 snk.2.y
+mov 1 snk.3.x
+mov 1 snk.3.y
 
 cp snk.1.x a
 cp snk.1.y b
@@ -110,23 +110,21 @@ cp grey S>c>d
 cp grey S>e>f
 
 
-
-
-cp 1 state
+mov 1 state
 
 stop
 
 
-cp 1 state :: rightHandle
+mov 1 state :: rightHandle
 stop
 
-cp 2 state :: leftHandle
+mov 2 state :: leftHandle
 stop
 
-cp 3 state :: upHandle
+mov 3 state :: upHandle
 stop
 
-cp 4 state :: downHandle
+mov 4 state :: downHandle
 stop
 
 black :: blinkHandle
@@ -149,15 +147,15 @@ if state == 4
 fi
 
 // now let's set the new head
-cp x snk.head.x
-cp y snk.head.y
+mov x snk.head.x
+mov y snk.head.y
 
 // XXX make sure GC will do right thing
 // without needing a manual free
 
-cp snk.2 snk.3
-cp snk.1 snk.2
-cp snk.head snk.1
+mov snk.2 snk.3
+mov snk.1 snk.2
+mov snk.head snk.1
 
 // doing this tedious first, easier
 cp snk.1.x a
@@ -949,7 +947,7 @@ stop
 					SIP++;
 					setTimeout(function() {
 						coreLoop();
-					}, 1000);
+					}, 300);
 					return "break";
 				}
 
@@ -983,7 +981,7 @@ stop
 					if (event == "~blink~") {
 						setInterval(() => {
 							eventHandler("~blink~");
-						}, 1000); // hardwired 1/5 sec now
+						}, 300); // hardwired 1/5 sec now
 					}
 
 
