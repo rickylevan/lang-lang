@@ -31,8 +31,8 @@
 	let sauce = `
 
 loop 1 5
-//  mov %1 snk./%1/.x
-  mov %1 %1
+  mov %1 snk./%1/.x
+//  mov %1 %1
 pool
 
 
@@ -890,15 +890,24 @@ stop
 					let basic_items = dest.split('.');
 
 					let items = [];
+
 					for (let i = 0; i < basic_items.length; i++) {
 						let bi = basic_items[i];
 						if (bi[0] == '/' && bi[bi.length-1] == '/') {
 							let unslash = bi.slice(1, bi.length-1);
 							items.push(getIntMeaning(unslash));
 						} else {
-							items.push(getIntMeaning(bi));
+							// for a non /.../, only get int meaning if
+							// there is just one dest item
+							if (basic_items.length == 1) {
+								items.push(getIntMeaning(bi));
+							} else {
+								items.push(bi);
+							}
 						}
 					}
+
+					console.log('dest items:', items);
 
 
 
