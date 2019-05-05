@@ -29,15 +29,10 @@
 	}
 
 	let sauce = `
-mov 3 snk.1.x
-mov 3 snk.1.y
-mov 5 snk
 
-mov 3 a
-
-loop 1 4
-  draw 180 a a
-  add 1 a a
+loop 1 5
+//  mov %1 snk./%1/.x
+  mov %1 %1
 pool
 
 
@@ -101,7 +96,7 @@ route ArrowRight rightHandle
 route ArrowUp upHandle
 route ArrowDown downHandle
 
-// route ~blink~ blinkHandle
+route ~blink~ blinkHandle
 
 mov 180 grey
 
@@ -113,16 +108,6 @@ mov 180 grey
 //  mov 1 snk.3.x
 //  mov 1 snk.3.y
 
-
-//loop 1 10
-//  add 1 %1 a
-//  draw grey snk./%1/.x snk./%1/.y
-
-// XXX old garbage draw format
-// cp grey S>snk.1.x>snk.1.y
-// cp grey S>snk.2.x>snk.2.y
-// cp grey S>snk.3.x>snk.3.y
-// pool
 
 
 // this is reversey, want snake going out right, oh well
@@ -911,7 +896,7 @@ stop
 							let unslash = bi.slice(1, bi.length-1);
 							items.push(getIntMeaning(unslash));
 						} else {
-							items.push(bi);
+							items.push(getIntMeaning(bi));
 						}
 					}
 
