@@ -88,7 +88,7 @@ route ArrowDown downHandle
 
 route ~blink~ blinkHandle
 
-mov 35 grey
+mov 180 grey
 
 // one is the head of snake, block furthest right
 mov 3 snk.1.x
@@ -540,7 +540,7 @@ stop
 		// first x across then y up. easy. This means tho some translations
 		// to an index-by-zero system that is right then down
 
-		// hehehe takes a shade from 0(black) to 49(white)
+
 		let graphicalWrite = (x, y, shade)  => {
 
 			// XXX for now let's just be graceful if out of range
@@ -559,9 +559,7 @@ stop
 			y = 30 - y - 1;
 
 			// now for shade, we want 0->0 and 49->255 (heh, we may clip perfect white)
-			let intensity = Math.floor(shade / 49 * 255);
-			let color_string = "rgb(" + intensity.toString() + "," + 
-				intensity.toString() + "," + intensity.toString() + ")";
+			let color_string = "rgb(" + shade + "," + shade + "," + shade + ")";
 
 
 			let mydiv = document.getElementById(x.toString() + "," + y.toString());
@@ -660,6 +658,7 @@ stop
 	let coreLoop = () => {
 
 		while (true) {
+			console.log('eyyy, we loopin');
 			if (SIP >= sauceLines.length || SIP < 0) {
 				l("SIP has fallen off the map, maybs cuz program finished");
 				break;
