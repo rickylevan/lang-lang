@@ -86,28 +86,34 @@ route ArrowRight rightHandle
 route ArrowUp upHandle
 route ArrowDown downHandle
 
-route ~blink~ blinkHandle
+// route ~blink~ blinkHandle
 
 mov 180 grey
 
 // one is the head of snake, block furthest right
-mov 3 snk.1.x
-mov 1 snk.1.y
-mov 2 snk.2.x
-mov 1 snk.2.y
-mov 1 snk.3.x
-mov 1 snk.3.y
+//  mov 3 snk.1.x
+//  mov 1 snk.1.y
+//  mov 2 snk.2.x
+//  mov 1 snk.2.y
+//  mov 1 snk.3.x
+//  mov 1 snk.3.y
 
-cp snk.1.x a
-cp snk.1.y b
-cp snk.2.x c
-cp snk.2.y d
-cp snk.3.x e
-cp snk.3.y f
 
-cp grey S>a>b
-cp grey S>c>d
-cp grey S>e>f
+//loop 1 10
+//  add 1 %1 a
+//  cp grey S>snk./%1/.x>snk./%1/.y
+// cp grey S>snk.1.x>snk.1.y
+// cp grey S>snk.2.x>snk.2.y
+// cp grey S>snk.3.x>snk.3.y
+// pool
+
+
+// this is reversey, want snake going out right, oh well
+loop 1 5
+  mov %1 snk./%1/.x
+  mov 1  snk./%1/.y
+  cp grey S>snk./%1/.x>snk./%1/.y
+pool
 
 
 mov 1 state
@@ -130,7 +136,7 @@ stop
 
 black :: blinkHandle
 
-// let us get head values
+// x and y naming here succinct
 cp snk.1.x x
 cp snk.1.y y
 
@@ -147,28 +153,17 @@ if state == 4
   sub 1 y y
 fi
 
-// now let's set the new head
 mov x snk.head.x
 mov y snk.head.y
 
-// XXX make sure GC will do right thing
-// without needing a manual free
 
 mov snk.2 snk.3
 mov snk.1 snk.2
 mov snk.head snk.1
 
-// doing this tedious first, easier
-cp snk.1.x a
-cp snk.1.y b
-cp snk.2.x c
-cp snk.2.y d
-cp snk.3.x e
-cp snk.3.y f
-
-cp grey S>a>b
-cp grey S>c>d
-cp grey S>e>f
+cp grey S>snk.1.x>snk.1.y
+cp grey S>snk.2.x>snk.2.y
+cp grey S>snk.3.x>snk.3.y
 
 
 
@@ -625,10 +620,31 @@ stop
 				return n;
 			}
 
+			// loop indices also have special meaning
+			if (blah == "%1") {
+				return loop_idxes[LD];
+			}
+			if (blah == "%2") {
+				return loop_idxes[LD-1];
+			}
+
+
+
 			let items = blah.split('.');
 			let x = {};
 			for (let i = 0; i < items.length; i++) {
 				let item = items[i];
+
+				// we also declare in this case at end of tree search
+				if (item == "*len*") {
+					return cheesyLength(x);
+				}
+
+				// tricky here, let's see if this works... interpret out the /.../
+				// XXX doubt this would work in general case
+				if (item[0] == '/' && item[item.length-1] == '/') {
+					item = getIntMeaning(item.slice(1, item.length-1));
+				}
 
 				if (i == 0) {
 					x = GS[item];
@@ -644,12 +660,7 @@ stop
 
 
 			/*// hardwiring some magic next
-			if (blah == "%1") {
-				return loop_idxes[LD];
-			}
-			if (blah == "%2") {
-				return loop_idxes[LD-1];
-			}
+
 
 			let maybsVal = GS[blah];
 			if (maybsVal != undefined) {
@@ -763,8 +774,8 @@ stop
 				}
 
 				case "loop": {
-					let start = parseInt(getNthWord(line, 1));
-					let nruns = parseInt(getNthWord(line, 2));
+					let start = getIntMeaning(getNthWord(line, 1));
+					let nruns = getIntMeaning(getNthWord(line, 2));
 
 					LD++;
 					loop_idxes[LD] = start;
@@ -818,7 +829,7 @@ stop
 						loop_fail_spots.pop();
 						LD--;
 					} else {
-						whereToLoopBackTo = loop_start_incs[LD];
+						let whereToLoopBackTo = loop_start_incs[LD];
 						loop_idxes[LD]++;
 						SIP = whereToLoopBackTo
 
@@ -1002,6 +1013,13 @@ stop
 						}, 300); // hardwired 1/5 sec now
 					}
 
+
+					break;
+				}
+
+				case "log": {
+
+					console.log(line);
 
 					break;
 				}
