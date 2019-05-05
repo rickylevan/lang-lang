@@ -15,7 +15,7 @@
 
 	//document.getElementById('meta').style = "display:flex;";
 
-
+	'use strict';
 
 
 
@@ -30,7 +30,7 @@
 
 
 	let sauce2 = `
-mov 35 grey
+mov 150 grey
 
 mov 7 snk.1.x
 mov 7 snk.1.y
@@ -127,6 +127,7 @@ stop
 mov 4 state :: downHandle
 stop
 
+
 black :: blinkHandle
 
 // let us get head values
@@ -168,7 +169,6 @@ cp snk.3.y f
 cp grey S>a>b
 cp grey S>c>d
 cp grey S>e>f
-
 
 
 
@@ -243,9 +243,16 @@ stop
 
 
 
+		// Yeah, refactor soon, but let's try something else
+		let cheesyLength = (obj) => {
+
+		}
 
 
-		Colors = {
+
+
+
+		let Colors = {
 			WHITE: "white",
 			GOLD: "gold",
 			SILVER: "silver",
@@ -399,7 +406,7 @@ stop
 
 		console.log('script says hiiii');
 		document.body.style.cursor = 'default';
-		cursorBox = [0,0]; // I know, keeping it simple atm
+		let cursorBox = [0,0]; // I know, keeping it simple atm
 		for (let i = 0; i < 30; i++) {
 			let mycol = document.createElement("div");
 			mycol.style = "display:flex;";
@@ -658,7 +665,6 @@ stop
 	let coreLoop = () => {
 
 		while (true) {
-			console.log('eyyy, we loopin');
 			if (SIP >= sauceLines.length || SIP < 0) {
 				l("SIP has fallen off the map, maybs cuz program finished");
 				break;
