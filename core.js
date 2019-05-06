@@ -415,7 +415,7 @@ let performDataFunction = (line) => {
 			let arg2 = getIntMeaning(getNthWord(line, 2));
 			let dest_name = getNthWord(line, 3);
 
-			// MWAHAHAHA subtract first arg from second arg
+			// subtract arg1 FROM arg2 semantics!
 			let dest = arg2 - arg1;
 			GS[dest_name] = dest;
 

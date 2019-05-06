@@ -9,9 +9,11 @@ route ArrowDown downHandle
 
 route ~blink~ blinkHandle
 
-loop 1 3
+mov 5 N
 
-mov 3 k
+loop 1 N
+
+cp N k
 sub %1 k k
 add 1 k k
 mov k snk./%1/.x
@@ -21,7 +23,7 @@ pool
 
 mov 180 grey
 black
-loop 1 3
+loop 1 N
   draw grey snk./%1/.x snk./%1/.y
 pool
 
@@ -61,20 +63,26 @@ if state == 4
   sub 1 y y
 fi
 
-mov 2 var1
-mov 3 var2
-mov snk./var1/ snk./var2/
 
-mov 1 var1
-mov 2 var2
-mov snk./var1/ snk./var2/
+
+sub 1 N p
+loop 1 p
+
+sub %1 N r
+add 1 r s
+mov snk./r/ snk./s/
+
+pool
+
+
+
 
 mov x snk.head.x
 mov y snk.head.y
 mov snk.head snk.1
 
 black
-loop 1 3
+loop 1 N
   draw grey snk./%1/.x snk./%1/.y
 pool
 
