@@ -2,6 +2,20 @@
 
 const sauce = `
 
+call first_function
+log alittlestring
+call first_function
+log blittlestring
+stop
+
+// :: first_function
+log in_first_function_yay
+back
+
+`;
+
+const sauce2 = `
+
 route ArrowLeft leftHandle
 route ArrowRight rightHandle
 route ArrowUp upHandle
@@ -9,7 +23,7 @@ route ArrowDown downHandle
 
 route ~blink~ blinkHandle
 
-mov 5 N
+mov 7 N
 
 loop 1 N
 

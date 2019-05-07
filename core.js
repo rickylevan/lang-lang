@@ -1,6 +1,6 @@
 'use strict';
 
-console.log('core.js script says hiiiii');
+console.log('~~~core.js script says hiiiii~~~');
 
 // sauce defined in sauce.js
 let sauceLines = sauce.split('\n');
@@ -55,6 +55,8 @@ buildRTM();
 let SIP = 0;
 
 let SKIP_SIP_INC = false;
+
+let RETURN_SIP_STACK = [];
 
 
 let GS = {};
@@ -139,13 +141,13 @@ let getFirstWord = (line) => {
 let coreLoop = () => {
 	while (true) {
 		if (SIP >= sauceLines.length || SIP < 0) {
-			console.log("SIP has fallen off the map, maybs cuz program finished");
+			throw "Error SIP out of bounds. Is there a missing `stop` or `back`?";
 			break;
 
 		}
-		console.log('LINE:', sauceLines[SIP]);
+		//console.log('LINE:', sauceLines[SIP]);
 		let out = performDataFunction(sauceLines[SIP]);
-		console.log('STATE NOW:', JSON.stringify(GS));
+		//console.log('STATE NOW:', JSON.stringify(GS));
 		if (out == "break") {
 			break;
 		}
@@ -207,6 +209,28 @@ let performDataFunction = (line) => {
 	let moveSemanticsOn = false;
 
 	switch(OP) {
+
+		case "call": {
+			SKIP_SIP_INC = true;
+			RETURN_SIP_STACK.push(SIP+1); // we return to inc of call site
+			let fn_name = getNthWord(line, 1);
+			let line_num = ROUTER_TAG_MAP[fn_name];
+			if (!line_num) {
+				throw "call to " + fn_name + " failed, undefined."
+			} else {
+				SIP = line_num;
+			}
+
+			break;
+		}
+
+		case "back": {
+			SKIP_SIP_INC = true;
+			let ret = RETURN_SIP_STACK.pop();
+			SIP = ret;
+			break;
+
+		}
 
 		case "fi": {
 			ICON = true;
@@ -481,7 +505,7 @@ let performDataFunction = (line) => {
 
 		case "log": {
 
-			console.log(line);
+			console.log(getNthWord(line, 1));
 
 			break;
 		}
