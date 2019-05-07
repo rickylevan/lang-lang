@@ -1,6 +1,6 @@
 // define our lang-lang source file and export as "sauce"
 
-const sauce = `
+const sauce2 = `
 
 call first_function
 log alittlestring
@@ -14,7 +14,7 @@ back
 
 `;
 
-const sauce2 = `
+const sauce = `
 
 route ArrowLeft leftHandle
 route ArrowRight rightHandle

@@ -74,13 +74,20 @@ let loop_start_incs = []; // +1 of the loop starts, where to loop back to
 let ICON = true;
 
 
-// lets KISS that right now we only have ints legal in teh lang-lang.
-let getIntMeaning = (blah) => {
+let getMeaning = (blah) => {
 
 	// if it is in int format, job is easy
 	let n = parseInt(blah);
 	if (!isNaN(n)) {
 		return n;
+	}
+
+	// also easy for basic booleans
+	if (blah == "true") {
+		return true;
+	}
+	if (blah == "false") {
+		return false;
 	}
 
 	// loop indices also have special meaning
@@ -106,7 +113,7 @@ let getIntMeaning = (blah) => {
 		// tricky here, let's see if this works... interpret out the /.../
 		// XXX doubt this would work in general case
 		if (item[0] == '/' && item[item.length-1] == '/') {
-			item = getIntMeaning(item.slice(1, item.length-1));
+			item = getMeaning(item.slice(1, item.length-1));
 		}
 
 		if (i == 0) {
@@ -238,8 +245,8 @@ let performDataFunction = (line) => {
 		}
 
 		case "loop": {
-			let start = getIntMeaning(getNthWord(line, 1));
-			let nruns = getIntMeaning(getNthWord(line, 2));
+			let start = getMeaning(getNthWord(line, 1));
+			let nruns = getMeaning(getNthWord(line, 2));
 
 			LD++;
 			loop_idxes[LD] = start;
@@ -260,8 +267,8 @@ let performDataFunction = (line) => {
 			let arg2 = getNthWord(line, 3);
 
 
-			let arg1int = getIntMeaning(arg1);
-			let arg2int = getIntMeaning(arg2);
+			let arg1int = getMeaning(arg1);
+			let arg2int = getMeaning(arg2);
 
 			if (bob == "==") {
 				ICON = (arg1int == arg2int);
@@ -319,7 +326,7 @@ let performDataFunction = (line) => {
 		case "cp": {
 
 			let raw_source = getNthWord(line, 1);
-			let source = getIntMeaning(getNthWord(line, 1));
+			let source = getMeaning(getNthWord(line, 1));
 
 			let raw_source_split = raw_source.split('.');
 
@@ -337,7 +344,7 @@ let performDataFunction = (line) => {
 					let rsi = raw_source_split[i];
 					if (rsi[0] == '/' && rsi[rsi.length-1] == '/') {
 						let unslash = rsi.slice(1, rsi.length-1);
-						source_items.push(getIntMeaning(unslash));
+						source_items.push(getMeaning(unslash));
 					} else {
 						source_items.push(rsi);
 					}
@@ -370,7 +377,7 @@ let performDataFunction = (line) => {
 				let bi = basic_items[i];
 				if (bi[0] == '/' && bi[bi.length-1] == '/') {
 					let unslash = bi.slice(1, bi.length-1);
-					items.push(getIntMeaning(unslash));
+					items.push(getMeaning(unslash));
 				} else {
 					// for a non /.../, only get int meaning if
 					// there is just one dest item
@@ -423,8 +430,8 @@ let performDataFunction = (line) => {
 		case "add": {
 
 			// hey this nth word as 1 works well cuz the op is 0, score
-			let arg1 = getIntMeaning(getNthWord(line, 1));
-			let arg2 = getIntMeaning(getNthWord(line, 2));
+			let arg1 = getMeaning(getNthWord(line, 1));
+			let arg2 = getMeaning(getNthWord(line, 2));
 			let dest_name = getNthWord(line, 3);
 
 			GS[dest_name] = arg1 + arg2;
@@ -435,8 +442,8 @@ let performDataFunction = (line) => {
 
 		case "sub": {
 
-			let arg1 = getIntMeaning(getNthWord(line, 1));
-			let arg2 = getIntMeaning(getNthWord(line, 2));
+			let arg1 = getMeaning(getNthWord(line, 1));
+			let arg2 = getMeaning(getNthWord(line, 2));
 			let dest_name = getNthWord(line, 3);
 
 			// subtract arg1 FROM arg2 semantics!
@@ -449,7 +456,7 @@ let performDataFunction = (line) => {
 
 		case "rngi": {
 
-			let arg1 = getIntMeaning(getNthWord(line, 1));
+			let arg1 = getMeaning(getNthWord(line, 1));
 			let dest_name = getNthWord(line, 2);
 			// + 1 for index by 1
 			GS[dest_name] = Math.floor(Math.random()*arg1) + 1;
@@ -512,9 +519,9 @@ let performDataFunction = (line) => {
 
 		case "draw": {
 
-			let shade = getIntMeaning(getNthWord(line, 1));
-			let x = getIntMeaning(getNthWord(line, 2));
-			let y = getIntMeaning(getNthWord(line, 3));
+			let shade = getMeaning(getNthWord(line, 1));
+			let x = getMeaning(getNthWord(line, 2));
+			let y = getMeaning(getNthWord(line, 3));
 
 			graphicalWrite(x, y, shade);
 
