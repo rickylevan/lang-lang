@@ -90,6 +90,7 @@ let getMeaning = (blah) => {
 		return false;
 	}
 
+	// XXX only covering two indices deep
 	// loop indices also have special meaning
 	if (blah == "%1") {
 		return loop_idxes[LD];
@@ -97,7 +98,6 @@ let getMeaning = (blah) => {
 	if (blah == "%2") {
 		return loop_idxes[LD-1];
 	}
-
 
 
 	let items = blah.split('.');
@@ -124,8 +124,49 @@ let getMeaning = (blah) => {
 	}
 
 	return x;
+}
 
 
+let writeDest = (source, dest) => {
+	let basic_items = dest.split('.');
+
+	let items = [];
+
+	for (let i = 0; i < basic_items.length; i++) {
+		let bi = basic_items[i];
+		if (bi[0] == '/' && bi[bi.length-1] == '/') {
+			let unslash = bi.slice(1, bi.length-1);
+			items.push(getMeaning(unslash));
+		} else {
+			// for a non /.../, only get int meaning if
+			// there is just one dest item
+			if (basic_items.length == 1) {
+				items.push(bi);
+			} else {
+				items.push(bi);
+			}
+		}
+	}
+
+	if (items.length == 1) {
+		GS[items[0]] = source;
+	} else if (items.length == 2) {
+		if (GS[items[0]] == undefined) {
+			GS[items[0]] = {};
+		}
+		GS[items[0]][items[1]] = source;
+	} else if (items.length == 3) {
+		if (GS[items[0]] == undefined) {
+			GS[items[0]] = {};
+		}
+		if (GS[items[0]][items[1]] == undefined) {
+			GS[items[0]][items[1]] = {};
+		}
+		GS[items[0]][items[1]][items[2]] = source;
+	} else {
+		// XXX
+		throw 'Invalid, dest chain too deep'
+	}
 }
 
 
@@ -220,8 +261,6 @@ let performDataFunction = (line) => {
 		SIP++;
 		return;
 	}
-
-	let moveSemanticsOn = false;
 
 	switch(OP) {
 
@@ -323,110 +362,49 @@ let performDataFunction = (line) => {
 
 		// can we maybe hack with not using break and just falling down?
 
-		case "mov": {
-			moveSemanticsOn = true;
+		case "cp": {
+			let source = getMeaning(getNthWord(line, 1));
+			let dest = getNthWord(line, 2);
+			writeDest(source, dest);
 
-			// hehehe no break, woooo
+			break;
 		}
 
-		// XXX Hacks still cheating
-		case "cp": {
+		case "mov": {
 
 			let raw_source = getNthWord(line, 1);
 			let source = getMeaning(getNthWord(line, 1));
 
 			let raw_source_split = raw_source.split('.');
 
-			// kill source on global scope, to give us move semantics
-			// the source is frozen now, we already know it. Here's a
-			// closure to call in when we're ready.
-			let killSourceOnGS = () => {
-
-				if (!moveSemanticsOn) {
-					return;
-				}
-
-				let source_items = [];
-				for (var i = 0; i < raw_source_split.length; i++) {
-					let rsi = raw_source_split[i];
-					if (rsi[0] == '/' && rsi[rsi.length-1] == '/') {
-						let unslash = rsi.slice(1, rsi.length-1);
-						source_items.push(getMeaning(unslash));
-					} else {
-						source_items.push(rsi);
-					}
-				}
-
-				// let's hack this out case by case before loop
-
-				if (source_items.length == 1) {
-					delete GS[source_items[0]];
-				} else if (source_items.length == 2) {
-					delete GS[source_items[0]][source_items[1]];
-				} else {
-					delete GS[source_items[0]][source_items[1]][source_items[2]];
-				}
-
-
-			}
 
 
 			let dest = getNthWord(line, 2);
 
-			// hmm, what if I just directly expand out items now
-			let basic_items = dest.split('.');
+			writeDest(source, dest);
 
-			//console.log('basic items:', basic_items);
 
-			let items = [];
+			// Next, if move semantics are on, kill the source item
 
-			for (let i = 0; i < basic_items.length; i++) {
-				let bi = basic_items[i];
-				if (bi[0] == '/' && bi[bi.length-1] == '/') {
-					let unslash = bi.slice(1, bi.length-1);
-					items.push(getMeaning(unslash));
+			let source_items = [];
+			for (var i = 0; i < raw_source_split.length; i++) {
+				let rsi = raw_source_split[i];
+				if (rsi[0] == '/' && rsi[rsi.length-1] == '/') {
+					let unslash = rsi.slice(1, rsi.length-1);
+					source_items.push(getMeaning(unslash));
 				} else {
-					// for a non /.../, only get int meaning if
-					// there is just one dest item
-					if (basic_items.length == 1) {
-						items.push(bi);
-					} else {
-						items.push(bi);
-					}
+					source_items.push(rsi);
 				}
 			}
 
-			//console.log('dest items:', items);
+			// XXX move semantics only deleting 3 deep from source
 
-
-
-			if (items.length == 1) {
-				GS[items[0]] = source;
-				killSourceOnGS();
-				break;
-			}
-
-
-			// XXX just rapid hacking, haven't verified if this is right
-			if (items.length == 2) {
-				if (GS[items[0]] == undefined) {
-					GS[items[0]] = {};
-				}
-				GS[items[0]][items[1]] = source;
-				killSourceOnGS();
-				break;
-			}
-
-			if (items.length == 3) {
-				if (GS[items[0]] == undefined) {
-					GS[items[0]] = {};
-				}
-				if (GS[items[0]][items[1]] == undefined) {
-					GS[items[0]][items[1]] = {};
-				}
-				GS[items[0]][items[1]][items[2]] = source;
-				killSourceOnGS();
-				break;
+			if (source_items.length == 1) {
+				delete GS[source_items[0]];
+			} else if (source_items.length == 2) {
+				delete GS[source_items[0]][source_items[1]];
+			} else {
+				delete GS[source_items[0]][source_items[1]][source_items[2]];
 			}
 
 			break;
