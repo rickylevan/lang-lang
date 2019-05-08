@@ -419,7 +419,7 @@ let performDataFunction = (line) => {
 			let arg2 = getMeaning(getNthWord(line, 2));
 			let dest_name = getNthWord(line, 3);
 
-			GS[dest_name] = arg1 + arg2;
+			writeDest(arg1 + arg2, dest_name);
 
 			break;
 
@@ -432,8 +432,7 @@ let performDataFunction = (line) => {
 			let dest_name = getNthWord(line, 3);
 
 			// subtract arg1 FROM arg2 semantics!
-			let dest = arg2 - arg1;
-			GS[dest_name] = dest;
+			writeDest(arg2 - arg1, dest_name)
 
 			break;
 
@@ -444,7 +443,7 @@ let performDataFunction = (line) => {
 			let arg1 = getMeaning(getNthWord(line, 1));
 			let dest_name = getNthWord(line, 2);
 			// + 1 for index by 1
-			GS[dest_name] = Math.floor(Math.random()*arg1) + 1;
+			writeDest(Math.floor(Math.random()*arg1) + 1, dest_name);
 
 
 			break;
