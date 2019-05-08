@@ -247,27 +247,6 @@ let performDataFunction = (line) => {
 
 		}
 
-		case "fi": {
-			ICON = true;
-			break;
-		}
-
-		case "loop": {
-			let start = getMeaning(getNthWord(line, 1));
-			let nruns = getMeaning(getNthWord(line, 2));
-
-			LD++;
-			loop_idxes[LD] = start;
-			// so if we loop start 2 for 5 runs, we go thru
-			// 2,3,4,5,6 and then 7 is the spot of failure
-			loop_fail_spots[LD] = start + nruns;
-
-			loop_start_incs[LD] = SIP + 1;
-
-			break;
-		}
-
-
 		case "if": {
 			// simple assumptions now for the win
 			let arg1 = getNthWord(line, 1);
@@ -287,6 +266,26 @@ let performDataFunction = (line) => {
 			} else if (bob == ">") {
 				ICON = (arg1int > arg2int);
 			}
+
+			break;
+		}
+
+		case "fi": {
+			ICON = true;
+			break;
+		}
+
+		case "loop": {
+			let start = getMeaning(getNthWord(line, 1));
+			let nruns = getMeaning(getNthWord(line, 2));
+
+			LD++;
+			loop_idxes[LD] = start;
+			// so if we loop start 2 for 5 runs, we go thru
+			// 2,3,4,5,6 and then 7 is the spot of failure
+			loop_fail_spots[LD] = start + nruns;
+
+			loop_start_incs[LD] = SIP + 1;
 
 			break;
 		}
@@ -537,11 +536,8 @@ let performDataFunction = (line) => {
 			break;
 		}
 
-
-
-
 		default: {
-			console.log("Unsupported op:", line);
+			throw "Unsupported op: " + line;
 		}
 
 
