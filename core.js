@@ -30,9 +30,6 @@ let buildRTM = () => {
 		let words = line.split(' ');
 		let colonIdx = words.indexOf('::');
 
-		//console.log('line is:', line);
-		//console.log('colon idx is:', colonIdx);
-
 		// if '::' not found, there's no router tag to add
 		if (colonIdx < 0) {
 			continue;
@@ -192,16 +189,14 @@ let coreLoop = (sauceLines) => {
 			break;
 
 		}
-		//console.log('LINE:', sauceLines[SIP]);
 		let out = performDataFunction(sauceLines[SIP]);
-		//console.log('STATE NOW:', JSON.stringify(GS));
 		if (out == "break") {
 			break;
 		}
 	}
 }
 
-// lang-lang
+// lang-lang injection from browser console
 let ll = (injected_src) => {
 	let injected_lines = injected_src.split('\n');
 	injected_lines.push("stop"); // automatically stop at end
@@ -212,16 +207,15 @@ let ll = (injected_src) => {
 
 let eventHandler = (event) => {
 
-    // should be garbage now: let event = e.key;
     let tag = ROUTER_MAP[event];
     if (!tag) {
-    	console.log('Event ', event, ' has no handling route!');
+    	throw 'Event ' + event + ' has no handling route!';
     	return;
     }
 
     let lineNum = ROUTER_TAG_MAP[tag];
     if (!lineNum) {
-    	console.log('Tag ', tag, ' is not defined at any line.');
+    	throw 'Tag ' + tag + ' is not defined at any line.';
     }
 
 
@@ -233,6 +227,7 @@ let eventHandler = (event) => {
 
 
 // a funny name about a big function that does a lot
+// the big loop with the big switch
 let performDataFunction = (line) => {
 
 	// handle whitespace flab && comment lines
@@ -246,10 +241,7 @@ let performDataFunction = (line) => {
 		return;
 	}
 
-
-
 	let OP = getFirstWord(line)
-
 
 	// with no icon, we skip over code, unless we find a FI which
 	// tells us to switch back
@@ -340,7 +332,6 @@ let performDataFunction = (line) => {
 			// if we are now to move forward, loop time over
 			if (curIdx >= failSpot-1) { // the -1 kind of a hack, loop counting
 				// XXX above hack might cause failure in trivial loop cases
-				//console.log("NOW:", curIdx, failSpot);
 				loop_idxes.pop();
 				loop_fail_spots.pop();
 				LD--;
@@ -348,10 +339,6 @@ let performDataFunction = (line) => {
 				let whereToLoopBackTo = loop_start_incs[LD];
 				loop_idxes[LD]++;
 				SIP = whereToLoopBackTo
-
-				// yes, why ++ the loop start when we are already
-				// doing a SIP++ anyway? I judge it's too slick and
-				// pointlessly confusing.
 
 				SKIP_SIP_INC = true;
 			}
@@ -467,7 +454,7 @@ let performDataFunction = (line) => {
 			return "break";
 		}
 
-		// XXX horrible shitty stop, must fix
+		// XXX wrong stop, must fix
 		case "stop": {
 			// do NOT SIP++, and return, so it's just this
 			// instruction over and over
@@ -505,21 +492,16 @@ let performDataFunction = (line) => {
 		}
 
 		case "log": {
-
-			console.log(getNthWord(line, 1));
-
+			console.log(getMeaning(getNthWord(line, 1)));
 			break;
 		}
 
 		case "draw": {
-
 			let shade = getMeaning(getNthWord(line, 1));
 			let x = getMeaning(getNthWord(line, 2));
 			let y = getMeaning(getNthWord(line, 3));
 
 			graphicalWrite(x, y, shade);
-
-
 			break;
 		}
 
