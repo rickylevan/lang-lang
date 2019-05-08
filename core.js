@@ -75,7 +75,6 @@ let ICON = true;
 
 
 let getMeaning = (blah) => {
-
 	// if it is in int format, job is easy
 	let n = parseInt(blah);
 	if (!isNaN(n)) {
@@ -412,13 +411,22 @@ let performDataFunction = (line) => {
 
 		}
 
+		case "inc": {
+			let arg1 = getNthWord(line, 1);
+			let meaning = getMeaning(arg1);
+			checkInt(meaning, OP);
+
+			writeDest(meaning + 1, arg1);
+			break;
+		}
+
 		case "add": {
 
-			// hey this nth word as 1 works well cuz the op is 0, score
 			let arg1 = getMeaning(getNthWord(line, 1));
 			let arg2 = getMeaning(getNthWord(line, 2));
-			let dest_name = getNthWord(line, 3);
+			checkInt(arg1, OP) && checkInt(arg2, OP);
 
+			let dest_name = getNthWord(line, 3);
 			writeDest(arg1 + arg2, dest_name);
 
 			break;
@@ -429,6 +437,8 @@ let performDataFunction = (line) => {
 
 			let arg1 = getMeaning(getNthWord(line, 1));
 			let arg2 = getMeaning(getNthWord(line, 2));
+			checkInt(arg1, OP) && checkInt(arg2, OP);
+
 			let dest_name = getNthWord(line, 3);
 
 			// subtract arg1 FROM arg2 semantics!

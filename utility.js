@@ -16,3 +16,11 @@ let cheesyLength = (obj) => {
 	}
 	return max;
 }
+
+let checkInt = (a, OP) => {
+	if ((typeof a) == "number") {
+		return true;
+	}
+
+	throw "Tried to use a non-int value with " + OP;
+}
