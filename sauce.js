@@ -36,10 +36,7 @@ mov 1 snk./%1/.y
 pool
 
 mov 180 grey
-black
-loop 1 N
-  draw grey snk./%1/.x snk./%1/.y
-pool
+call drawSnake
 
 mov 1 state
 
@@ -95,12 +92,19 @@ mov x snk.head.x
 mov y snk.head.y
 mov snk.head snk.1
 
+call drawSnake
+
+stop
+
+
+// :: drawSnake
 black
 loop 1 N
   draw grey snk./%1/.x snk./%1/.y
 pool
+back
 
-stop
+
 
 `
 	
