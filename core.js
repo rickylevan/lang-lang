@@ -145,7 +145,7 @@ let getFirstWord = (line) => {
 
 
 
-let coreLoop = () => {
+let coreLoop = (sauceLines) => {
 	while (true) {
 		if (SIP >= sauceLines.length || SIP < 0) {
 			throw "Error SIP out of bounds. Is there a missing `stop` or `back`?";
@@ -159,6 +159,14 @@ let coreLoop = () => {
 			break;
 		}
 	}
+}
+
+// lang-lang
+let ll = (injected_src) => {
+	let injected_lines = injected_src.split('\n');
+	injected_lines.push("stop"); // automatically stop at end
+	SIP = 0;
+	coreLoop(injected_lines);
 }
 
 
@@ -178,7 +186,7 @@ let eventHandler = (event) => {
 
 
     SIP = lineNum;
-    coreLoop();
+    coreLoop(sauceLines);
 
 
 }
@@ -468,7 +476,7 @@ let performDataFunction = (line) => {
 		case "sleep": {
 			SIP++;
 			setTimeout(function() {
-				coreLoop();
+				coreLoop(sauceLines);
 			}, PAUSE_TIME);
 			return "break";
 		}
@@ -478,7 +486,7 @@ let performDataFunction = (line) => {
 			// do NOT SIP++, and return, so it's just this
 			// instruction over and over
 			setTimeout(function() {
-				coreLoop();
+				coreLoop(sauceLines);
 			}, 1000000); // lol
 			return "break";
 		}
@@ -560,4 +568,4 @@ document.addEventListener('keydown', (e) => {
 
 
 
-coreLoop();
+coreLoop(sauceLines);
