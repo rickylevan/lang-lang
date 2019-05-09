@@ -70,6 +70,11 @@ let loop_start_incs = []; // +1 of the loop starts, where to loop back to
 // whether or not the if check is on, i.e. are we applying it?
 let ICON = true;
 
+// lip stuff, right now just implementing only single depth
+let lip_start = null;
+let LIP_ICON = true;
+let lip_going = false;
+
 
 let getMeaning = (blah) => {
 	// if it is in int format, job is easy
@@ -245,9 +250,12 @@ let performDataFunction = (line) => {
 
 	// with no icon, we skip over code, unless we find a FI which
 	// tells us to switch back
-	if (!ICON) {
+	// We now use this mechanic 
+	if (!ICON || !LIP_ICON) {
 		if (OP == "fi") {
 			ICON = true;
+		} else if (OP == "pil") {
+			LIP_ICON = true;
 		}
 		SIP++;
 		return;
@@ -305,6 +313,34 @@ let performDataFunction = (line) => {
 			break;
 		}
 
+		// cute name for our conditional loop
+		case "lip": {
+
+			// XXX think think think
+
+			let arg = getMeaning(getNthWord(line, 1));
+			checkBool(arg, OP);
+			if (!arg) {
+				LIP_ICON = false;
+			}
+
+			break
+		}
+
+		case "pil": {
+			// like with "pool", one of two cases
+			if (LIP_ICON) {}
+
+			// XXX
+		// Oh no, this isn't quite correct right now. We can't just jump to
+		// the lid_start_incs[LID]. That's the wrong concept, because we need
+		// to re-evaluate each time we jump back whether the condition is met.
+
+
+
+			break
+		}
+
 		case "loop": {
 			let start = getMeaning(getNthWord(line, 1));
 			let nruns = getMeaning(getNthWord(line, 2));
@@ -350,6 +386,9 @@ let performDataFunction = (line) => {
 
 		case "cp": {
 			let source = getMeaning(getNthWord(line, 1));
+			if (source == undefined) {
+				throw "cp: " + getNthWord(line, 1) + " results in no source meaning";
+			}
 			let dest = getNthWord(line, 2);
 			writeDest(source, dest);
 
@@ -358,19 +397,43 @@ let performDataFunction = (line) => {
 
 		case "mov": {
 
-			let raw_source = getNthWord(line, 1);
 			let source = getMeaning(getNthWord(line, 1));
+			let raw_source = getNthWord(line, 1);
 
-			let raw_source_split = raw_source.split('.');
+			let fail_string = "Use cp on literals, mov is equivalent exchange: ";
+			// if it is in int format, job is easy
+			let n = parseInt(raw_source);
+			if (!isNaN(n)) {
+				throw fail_string + raw_source;
+			}
 
+			// also easy for basic booleans
+			if (raw_source == "true") {
+				throw fail_string + raw_source;
+			}
+			if (raw_source == "false") {
+				return fail_string + raw_source;
+			}
+
+
+
+			if (source == undefined) {
+				throw "mov: " + getNthWord(line, 1) + " results in no source meaning";
+			}
 
 
 			let dest = getNthWord(line, 2);
-
 			writeDest(source, dest);
 
 
-			// Next, if move semantics are on, kill the source item
+			// Next, move semantics. Kill the source item. Only one pointer standing!
+
+
+
+			// Handle special /.../ expansions
+
+
+			let raw_source_split = raw_source.split('.');
 
 			let source_items = [];
 			for (var i = 0; i < raw_source_split.length; i++) {

@@ -24,3 +24,11 @@ let checkInt = (a, OP) => {
 
 	throw "Tried to use a non-int value with " + OP;
 }
+
+let checkBool = (b, OP) => {
+	if ((typeof b) == "boolean") {
+		return true;
+	}
+
+	throw "Tried to use a non-bool value with " + OP;
+}

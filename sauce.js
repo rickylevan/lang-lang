@@ -23,7 +23,7 @@ route ArrowDown downHandle
 
 route ~blink~ blinkHandle
 
-mov 7 N
+cp 7 N
 
 loop 1 N
 
@@ -31,29 +31,29 @@ cp N k
 sub %1 k k
 add 1 k k
 mov k snk./%1/.x
-mov 1 snk./%1/.y
+cp 1 snk./%1/.y
 
 pool
 
-mov 180 grey
+cp 180 grey
 call drawSnake
 
-mov 1 state
+cp 1 state
 
 
 stop
 
 
-mov 1 state :: rightHandle
+cp 1 state :: rightHandle
 stop
 
-mov 2 state :: leftHandle
+cp 2 state :: leftHandle
 stop
 
-mov 3 state :: upHandle
+cp 3 state :: upHandle
 stop
 
-mov 4 state :: downHandle
+cp 4 state :: downHandle
 stop
 
 // :: blinkHandle
@@ -75,6 +75,7 @@ if state == 4
 fi
 
 
+// XXX ahh I goofed it's fine 
 
 sub 1 N p
 loop 1 p
