@@ -477,6 +477,28 @@ let performDataFunction = (line) => {
 			break;
 		}
 
+		case "&&": {
+			let arg1 = getMeaning(getNthWord(line, 1));
+			let arg2 = getMeaning(getNthWord(line, 2));
+			checkBool(arg1, OP) && checkBool(arg2, OP);
+
+			let dest_name = getNthWord(line, 3);
+			writeDest(arg1 && arg2, dest_name);	
+			
+			break;		
+		}
+
+		case "||": {
+			let arg1 = getMeaning(getNthWord(line, 1));
+			let arg2 = getMeaning(getNthWord(line, 2));
+			checkBool(arg1, OP) && checkBool(arg2, OP);
+
+			let dest_name = getNthWord(line, 3);
+			writeDest(arg1 || arg2, dest_name);	
+			
+			break;		
+		}
+
 		case "add": {
 
 			let arg1 = getMeaning(getNthWord(line, 1));
