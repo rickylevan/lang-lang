@@ -124,9 +124,27 @@ back
 
 
 // :: chooseWhitePill
+cp true test
+
+lip test
 
 rngi 30 xrand
 rngi 30 yrand
+
+cp false match
+loop 1 snk.*len*
+== snk./%i/.x xrand xmatch
+== snk./%i/.y yrand ymatch
+
+// XXX Need to add additional logical operators and if support for just taking boolean
+
+
+
+
+
+
+
+
 
 
 `

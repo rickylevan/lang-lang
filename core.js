@@ -285,23 +285,31 @@ let performDataFunction = (line) => {
 		}
 
 		case "if": {
-			// simple assumptions now for the win
+			// first support case where the argument is just a boolean
+			if (getNthWord(line, 2) == undefined) {
+				let arg = getMeaning(getNthWord(line, 1));
+				checkBool(arg, OP);
+				ICON = arg;
+				break;
+			}
+
+			// otherwise we're handling special if syntax
 			let arg1 = getNthWord(line, 1);
 			let bob = getNthWord(line, 2); // bin op bool
 			let arg2 = getNthWord(line, 3);
 
 
-			let arg1int = getMeaning(arg1);
-			let arg2int = getMeaning(arg2);
+			let arg1m = getMeaning(arg1);
+			let arg2m = getMeaning(arg2);
 
 			if (bob == "==") {
-				ICON = (arg1int == arg2int);
+				ICON = (arg1m == arg2m);
 			} else if (bob == "!=") {
-				ICON = (arg1int != arg2int);
+				ICON = (arg1m != arg2m);
 			} else if (bob == "<") {
-				ICON = (arg1int < arg2int);
+				ICON = (arg1m < arg2m);
 			} else if (bob == ">") {
-				ICON = (arg1int > arg2int);
+				ICON = (arg1m > arg2m);
 			}
 
 			break;
