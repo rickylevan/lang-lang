@@ -71,9 +71,8 @@ let loop_start_incs = []; // +1 of the loop starts, where to loop back to
 let ICON = true;
 
 // lip stuff, right now just implementing only single depth
-let lip_start = null;
+let LIP_START = null;
 let LIP_ICON = true;
-let lip_going = false;
 
 
 let getMeaning = (blah) => {
@@ -314,9 +313,9 @@ let performDataFunction = (line) => {
 		}
 
 		// cute name for our conditional loop
+		// XXX hacked to only handle single depth case at the moment
 		case "lip": {
-
-			// XXX think think think
+			LIP_START = SIP;
 
 			let arg = getMeaning(getNthWord(line, 1));
 			checkBool(arg, OP);
@@ -329,14 +328,14 @@ let performDataFunction = (line) => {
 
 		case "pil": {
 			// like with "pool", one of two cases
-			if (LIP_ICON) {}
-
-			// XXX
-		// Oh no, this isn't quite correct right now. We can't just jump to
-		// the lid_start_incs[LID]. That's the wrong concept, because we need
-		// to re-evaluate each time we jump back whether the condition is met.
-
-
+			if (LIP_ICON) {
+				SIP = LIP_START;
+				SKIP_SIP_INC = true;
+			} else {
+				// who cares if we leave LIP_START state
+				LIP_ICON = true;
+				// and we just keep going
+			}
 
 			break
 		}

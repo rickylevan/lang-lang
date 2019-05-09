@@ -1,6 +1,23 @@
 // define our lang-lang source file and export as "sauce"
 
-const sauce2 = `
+let sauce = `
+
+cp true test
+
+lip test
+
+rngi 20 a
+log a
+if a == 10
+cp false test
+fi
+
+pil
+
+
+`
+
+let sauce2 = `
 
 call first_function
 log alittlestring
@@ -14,7 +31,7 @@ back
 
 `;
 
-const sauce = `
+let sauce3 = `
 
 route ArrowLeft leftHandle
 route ArrowRight rightHandle
@@ -106,8 +123,23 @@ pool
 back
 
 
+// :: chooseWhitePill
+
+rngi 30 xrand
+rngi 30 yrand
+
 
 `
+
+
+
+
+
+
+
+
+// just like injections, let's automatically add stop to sauce
+sauce += "\nstop";
 	
 		
 console.log(`The sauce:`);
