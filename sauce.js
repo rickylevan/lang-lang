@@ -125,12 +125,16 @@ call drawModel
 stop
 
 
+
+
 // :: drawModel
+
 black
 ! dead alive
 if alive
 loop 1 snk.*len*
   cp 102 color.g
+  cp 75 color.b
   draw color snk./%1/.x snk./%1/.y
 pool
 fi
@@ -142,11 +146,15 @@ loop 1 snk.*len*
 pool
 fi
 
-draw 255 whitepill.x whitepill.y
+draw 230 whitepill.x whitepill.y
 back
 
 
+
+
+
 // :: chooseWhitePill
+
 cp true test
 
 lip test
@@ -176,6 +184,9 @@ fi
 pil
 
 back
+
+
+
 
 
 // :: checkSelfIntersect
