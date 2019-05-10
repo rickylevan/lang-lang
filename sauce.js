@@ -51,16 +51,35 @@ rngi 30 yrand
 
 cp false match
 loop 1 snk.*len*
+log %1
+== xrand snk./%1/.x xmatch
+== yrand snk./%1/.y ymatch
 
+log "x and y match booleans:"
+log xmatch
+log ymatch
+sleep
 
+if xmatch && ymatch
+log "found a double match"
+cp true match
+fi
+pool
 
+! match nomatch
 
+log "nomatch is:"
+log nomatch
 
-log xrand
-log yrand
-
+if nomatch
+mov xrand whitepill.x
+mov yrand whitepill.y
+cp false test
+fi
 
 pil
+
+back
 
 
 

@@ -314,7 +314,6 @@ let performDataFunction = (line) => {
 				ICON = (arg1 && arg2);
 			} else if (bob == "||") {
 				ICON = (arg1 || arg2);
-			}
 			} else {
 				throw "Unrecognized if operator: " + bob;
 			}
@@ -484,11 +483,20 @@ let performDataFunction = (line) => {
 			break;
 		}
 
+		case "!": {
+			let arg1 = getMeaning(getNthWord(line, 1));
+			let dest_name = getNthWord(line, 2);
+			checkBool(arg1, OP);
+			writeDest(!arg1, dest_name);
+			break;
+		}
+
 		case "==": {
 			let arg1 = getMeaning(getNthWord(line, 1));
 			let arg2 = getMeaning(getNthWord(line, 2));
 			let dest_name = getNthWord(line, 3);
 			writeDest(arg1 == arg2, dest_name);
+			break;
 		}
 
 		case "&&": {
@@ -598,6 +606,12 @@ let performDataFunction = (line) => {
 		}
 
 		case "log": {
+			let arg = line.slice(4, line.length);
+			if (arg[0] == '"' && arg[arg.length-1] == '"') {
+				console.log('Log of a literal string!!');
+				console.log(arg.slice(1, arg.length-1));
+				break;
+			}
 			console.log(getMeaning(getNthWord(line, 1)));
 			break;
 		}
