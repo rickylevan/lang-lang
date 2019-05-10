@@ -1,4 +1,4 @@
-const PAUSE_TIME = 1000;
+const PAUSE_TIME = 100;
 
 const Colors = {
 	WHITE: "white",

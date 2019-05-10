@@ -311,9 +311,9 @@ let performDataFunction = (line) => {
 			} else if (bob == ">") {
 				ICON = (arg1m > arg2m);
 			} else if (bob == "&&") {
-				ICON = (arg1 && arg2);
+				ICON = (arg1m && arg2m);
 			} else if (bob == "||") {
-				ICON = (arg1 || arg2);
+				ICON = (arg1m || arg2m);
 			} else {
 				throw "Unrecognized if operator: " + bob;
 			}
@@ -608,7 +608,6 @@ let performDataFunction = (line) => {
 		case "log": {
 			let arg = line.slice(4, line.length);
 			if (arg[0] == '"' && arg[arg.length-1] == '"') {
-				console.log('Log of a literal string!!');
 				console.log(arg.slice(1, arg.length-1));
 				break;
 			}

@@ -1,6 +1,6 @@
 // define our lang-lang source file and export as "sauce"
 
-let sauce = `
+let sauce7 = `
 
 cp true test
 
@@ -99,7 +99,7 @@ back
 
 `;
 
-let sauce3 = `
+let sauce = `
 
 route ArrowLeft leftHandle
 route ArrowRight rightHandle
@@ -121,7 +121,10 @@ cp 1 snk./%1/.y
 pool
 
 cp 180 grey
-call drawSnake
+
+call chooseWhitePill
+
+call drawModel
 
 cp 1 state
 
@@ -160,8 +163,6 @@ if state == 4
 fi
 
 
-// XXX ahh I goofed it's fine 
-
 sub 1 N p
 loop 1 p
 
@@ -173,21 +174,22 @@ pool
 
 
 
-
 mov x snk.head.x
 mov y snk.head.y
 mov snk.head snk.1
 
-call drawSnake
+call drawModel
 
 stop
 
 
-// :: drawSnake
+// :: drawModel
 black
 loop 1 N
   draw grey snk./%1/.x snk./%1/.y
 pool
+
+draw 255 whitepill.x whitepill.y
 back
 
 
@@ -201,13 +203,28 @@ rngi 30 yrand
 
 cp false match
 loop 1 snk.*len*
-== snk./%i/.x xrand xmatch
-== snk./%i/.y yrand ymatch
+== xrand snk./%1/.x xmatch
+== yrand snk./%1/.y ymatch
+cp false xmatch
+cp false ymatch
 
-// XXX Need to add additional logical operators and if support for just taking boolean
+if xmatch && ymatch
+cp true match
+fi
 
+pool
 
+! match nomatch
 
+if nomatch
+mov xrand whitepill.x
+mov yrand whitepill.y
+cp false test
+fi
+
+pil
+
+back
 
 
 
