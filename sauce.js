@@ -1,104 +1,5 @@
 // define our lang-lang source file and export as "sauce"
 
-let sauce7 = `
-
-cp true test
-
-lip test
-
-rngi 20 a
-log a
-if a == 10
-cp false test
-fi
-
-pil
-
-
-cp 7 N
-
-loop 1 N
-
-cp N k
-sub %1 k k
-add 1 k k
-mov k snk./%1/.x
-cp 1 snk./%1/.y
-
-pool
-
-cp 180 grey
-
-call drawSnake
-call chooseWhitePill
-
-stop
-
-// :: drawSnake
-black
-loop 1 N
-  draw grey snk./%1/.x snk./%1/.y
-pool
-back
-
-// :: chooseWhitePill
-cp true test
-
-lip test
-
-rngi 30 xrand
-rngi 30 yrand
-
-cp false match
-loop 1 snk.*len*
-log %1
-== xrand snk./%1/.x xmatch
-== yrand snk./%1/.y ymatch
-
-log "x and y match booleans:"
-log xmatch
-log ymatch
-sleep
-
-if xmatch && ymatch
-log "found a double match"
-cp true match
-fi
-pool
-
-! match nomatch
-
-log "nomatch is:"
-log nomatch
-
-if nomatch
-mov xrand whitepill.x
-mov yrand whitepill.y
-cp false test
-fi
-
-pil
-
-back
-
-
-
-`
-
-let sauce2 = `
-
-call first_function
-log alittlestring
-call first_function
-log blittlestring
-stop
-
-// :: first_function
-log in_first_function_yay
-back
-
-`;
-
 let sauce = `
 
 route ArrowLeft leftHandle
@@ -164,6 +65,21 @@ if state == 4
   sub 1 y y
 fi
 
+
+if x == 31
+cp 1 x
+fi
+if y == 31
+cp 1 y
+fi
+if x == 0
+cp 30 x
+fi
+if y == 0
+cp 30 y
+fi
+
+
 == x whitepill.x xhead
 == y whitepill.y yhead
 if xhead && yhead
@@ -196,9 +112,6 @@ mov x snk.head.x
 mov y snk.head.y
 mov snk.head snk.1
 
-
-// == snk.1.x whitepill.x xhead
-// == snk.1.y whitepill.y yhead
 
 if xhead && yhead
 call chooseWhitePill
