@@ -89,10 +89,10 @@ if y > SIZE
 cp 1 y
 fi
 if x == 0
-cp 30 x
+cp SIZE x
 fi
 if y == 0
-cp 30 y
+cp SIZE y
 fi
 
 
