@@ -25,4 +25,8 @@ Lang-Lang is implemented in JavaScript, which of course means all of the advanta
 
 * Scope other than the global scope. In particular, scoped functions to pass input and receive output.
 
+* Strings. Right now there are implicit strings as the keys of the JavaScript objects, but the only primitive types are JavaScript's `boolean` and `number.`
+
+* Type constraints that keep the high-level assembly flavor of the language. One idea that could be cool is to have a template system like `tt snk.*i*.x :: number`, and `tt snk.*i*.y :: number`, where the `*i*` is a wildcard catch-all. With a `development_mode` turned on, we can intercept any writes to the `x` and `y` fields of a snake segment and verify that they are both type number.
+
 * Expressions. These are super convenient, but I might just not implement them. No expressions means that source lines are more isomorphic to actual computer actions, not using "under the hood" invisible instructions to manipulate the expression. No expressions gives a very crisp high-level assembly feel to the language.
