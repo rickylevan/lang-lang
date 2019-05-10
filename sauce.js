@@ -158,8 +158,6 @@ cp false match
 loop 1 snk.*len*
 == xrand snk./%1/.x xmatch
 == yrand snk./%1/.y ymatch
-cp false xmatch
-cp false ymatch
 
 if xmatch && ymatch
 cp true match
