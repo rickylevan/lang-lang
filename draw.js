@@ -22,7 +22,7 @@ for (let i = 0; i < 30; i++) {
 // first x across then y up. easy. This means tho some translations
 // to an index-by-zero system that is right then down
 
-let graphicalWrite = (x, y, shade)  => {
+let graphicalWrite = (x, y, color)  => {
 
 	// XXX for now let's just be graceful if out of range
 	if (x < 1 || x > 30) {
@@ -39,8 +39,33 @@ let graphicalWrite = (x, y, shade)  => {
 	// 30 magic
 	y = 30 - y - 1;
 
-	// now for shade, we want 0->0 and 49->255 (heh, we may clip perfect white)
-	let color_string = "rgb(" + shade + "," + shade + "," + shade + ")";
+	var red
+	var green
+	var blue
+
+	if ((typeof color) == "number") {
+		red = color;
+		green = color;
+		blue = color;
+	} else {
+		if (color.r) {
+			red = color.r;
+		} else {
+			red = 0;
+		}
+		if (color.b) {
+			blue = color.b;
+		} else {
+			blue = 0;
+		}
+		if (color.g) {
+			green = color.g;
+		} else {
+			green = 0;
+		}
+	}
+
+	let color_string = "rgb(" + red + "," + green + "," + blue + ")";
 
 
 	let mydiv = document.getElementById(x.toString() + "," + y.toString());
@@ -48,3 +73,17 @@ let graphicalWrite = (x, y, shade)  => {
 	// this will be in webgl later anyway
 	mydiv.style="height:20px;width:20px;background-color:" + color_string + ";";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

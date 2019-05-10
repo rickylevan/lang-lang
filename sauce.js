@@ -120,7 +120,6 @@ mov snk.head snk.1
 
 call checkSelfIntersect
 
-
 call drawModel
 
 stop
@@ -128,9 +127,20 @@ stop
 
 // :: drawModel
 black
+! dead alive
+if alive
 loop 1 snk.*len*
-  draw grey snk./%1/.x snk./%1/.y
+  cp 102 color.g
+  draw color snk./%1/.x snk./%1/.y
 pool
+fi
+if dead
+loop 1 snk.*len*
+  cp 255 color.r
+  cp 102 color.b
+  draw color snk./%1/.x snk./%1/.y
+pool
+fi
 
 draw 255 whitepill.x whitepill.y
 back
