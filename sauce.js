@@ -15,6 +15,55 @@ fi
 pil
 
 
+cp 7 N
+
+loop 1 N
+
+cp N k
+sub %1 k k
+add 1 k k
+mov k snk./%1/.x
+cp 1 snk./%1/.y
+
+pool
+
+cp 180 grey
+
+call drawSnake
+call chooseWhitePill
+
+stop
+
+// :: drawSnake
+black
+loop 1 N
+  draw grey snk./%1/.x snk./%1/.y
+pool
+back
+
+// :: chooseWhitePill
+cp true test
+
+lip test
+
+rngi 30 xrand
+rngi 30 yrand
+
+cp false match
+loop 1 snk.*len*
+
+
+
+
+
+log xrand
+log yrand
+
+
+pil
+
+
+
 `
 
 let sauce2 = `
