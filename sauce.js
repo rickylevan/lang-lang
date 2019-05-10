@@ -146,6 +146,8 @@ stop
 
 // :: blinkHandle
 
+cp false extend
+
 cp snk.1.x x
 cp snk.1.y y
 
@@ -162,9 +164,25 @@ if state == 4
   sub 1 y y
 fi
 
+== x whitepill.x xhead
+== y whitepill.y yhead
+if xhead && yhead
+call chooseWhitePill
+cp true extend
+fi
 
-sub 1 N p
-loop 1 p
+cp 1 start
+if extend
+cp 0 start
+fi
+
+sub 1 snk.*len* p
+if extend
+inc p
+fi
+
+cp snk.*len* N
+loop start p
 
 sub %1 N r
 add 1 r s
@@ -178,6 +196,16 @@ mov x snk.head.x
 mov y snk.head.y
 mov snk.head snk.1
 
+
+// == snk.1.x whitepill.x xhead
+// == snk.1.y whitepill.y yhead
+
+if xhead && yhead
+call chooseWhitePill
+fi
+
+
+
 call drawModel
 
 stop
@@ -185,7 +213,7 @@ stop
 
 // :: drawModel
 black
-loop 1 N
+loop 1 snk.*len*
   draw grey snk./%1/.x snk./%1/.y
 pool
 
