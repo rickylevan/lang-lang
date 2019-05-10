@@ -4,7 +4,7 @@ This is my first programming language, in the style of high-level assembly. I th
 
 Lang-Lang is implemented in JavaScript, which of course means all of the advantages of working inside of the browser.
 
-Here are some notable features of the language thus far:
+**Here are some notable features of the language thus far:**
 
 * Hard `mov` semantics even with primitive types. `mov a b` means the name `a` is no longer accessible on the global scope.
 
@@ -15,7 +15,7 @@ Here are some notable features of the language thus far:
 * General assembly character. There is something that just feels good about each line beginning with its operation. Everyone knows what `b = a` means, but it's still intriguing to `mov a b`
 
 
-Here are some notable features that are missing right now
+**Here are some notable features that are missing right now:**
 
 * Scope other than the global scope
 
