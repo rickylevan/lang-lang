@@ -21,6 +21,7 @@ cp 1 snk./%1/.y
 
 pool
 
+cp false dead
 cp 180 grey
 
 call chooseWhitePill
@@ -46,6 +47,10 @@ cp 4 state :: downHandle
 stop
 
 // :: blinkHandle
+
+if dead
+stop
+fi
 
 cp false extend
 
@@ -113,10 +118,7 @@ mov y snk.head.y
 mov snk.head snk.1
 
 
-if xhead && yhead
-call chooseWhitePill
-fi
-
+call checkSelfIntersect
 
 
 call drawModel
@@ -166,6 +168,36 @@ fi
 pil
 
 back
+
+
+// :: checkSelfIntersect
+
+sub 1 snk.*len* p
+loop 1 p
+
+add 1 %1 up
+
+sub up snk.*len* nruns
+inc nruns
+
+loop up nruns
+
+== snk./%1/.x snk./%2/.x xmatch
+== snk./%1/.y snk./%2/.y ymatch
+
+
+if xmatch && ymatch
+cp true dead
+fi
+
+
+pool
+
+pool
+
+back
+
+
 
 
 
