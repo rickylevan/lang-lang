@@ -310,6 +310,13 @@ let performDataFunction = (line) => {
 				ICON = (arg1m < arg2m);
 			} else if (bob == ">") {
 				ICON = (arg1m > arg2m);
+			} else if (bob == "&&") {
+				ICON = (arg1 && arg2);
+			} else if (bob == "||") {
+				ICON = (arg1 || arg2);
+			}
+			} else {
+				throw "Unrecognized if operator: " + bob;
 			}
 
 			break;
@@ -475,6 +482,13 @@ let performDataFunction = (line) => {
 
 			writeDest(meaning + 1, arg1);
 			break;
+		}
+
+		case "==": {
+			let arg1 = getMeaning(getNthWord(line, 1));
+			let arg2 = getMeaning(getNthWord(line, 2));
+			let dest_name = getNthWord(line, 3);
+			writeDest(arg1 == arg2, dest_name);
 		}
 
 		case "&&": {
