@@ -9,6 +9,8 @@ route ArrowDown downHandle
 
 route ~blink~ blinkHandle
 
+
+cp 30 SIZE
 cp 7 N
 
 loop 1 N
@@ -24,27 +26,33 @@ pool
 cp false dead
 cp 180 grey
 
+cp 1 state
+
 call chooseWhitePill
 
 call drawModel
 
+stop
+
+
+
+// :: rightHandle
 cp 1 state
+stop
 
+// :: leftHandle
+cp 2 state
+stop
 
+// :: upHandle
+cp 3 state
+stop
+
+// :: downHandle
+cp 4 state
 stop
 
 
-cp 1 state :: rightHandle
-stop
-
-cp 2 state :: leftHandle
-stop
-
-cp 3 state :: upHandle
-stop
-
-cp 4 state :: downHandle
-stop
 
 // :: blinkHandle
 
@@ -58,23 +66,26 @@ cp snk.1.x x
 cp snk.1.y y
 
 if state == 1
-  add 1 x x
+add 1 x x
 fi
+
 if state == 2
-  sub 1 x x
+sub 1 x x
 fi
+
 if state == 3
-  add 1 y y
+add 1 y y
 fi
+
 if state == 4
-  sub 1 y y
+sub 1 y y
 fi
 
 
-if x == 31
+if x > SIZE
 cp 1 x
 fi
-if y == 31
+if y > SIZE
 cp 1 y
 fi
 if x == 0
@@ -131,18 +142,20 @@ stop
 
 black
 ! dead alive
+
 if alive
 loop 1 snk.*len*
-  cp 102 color.g
-  cp 75 color.b
-  draw color snk./%1/.x snk./%1/.y
+cp 102 color.g
+cp 75 color.b
+draw color snk./%1/.x snk./%1/.y
 pool
 fi
+
 if dead
 loop 1 snk.*len*
-  cp 255 color.r
-  cp 102 color.b
-  draw color snk./%1/.x snk./%1/.y
+cp 255 color.r
+cp 102 color.b
+draw color snk./%1/.x snk./%1/.y
 pool
 fi
 
@@ -159,8 +172,8 @@ cp true test
 
 lip test
 
-rngi 30 xrand
-rngi 30 yrand
+rngi SIZE xrand
+rngi SIZE yrand
 
 cp false match
 loop 1 snk.*len*
