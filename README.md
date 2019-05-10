@@ -12,6 +12,12 @@ Lang-Lang is implemented in JavaScript, which of course means all of the advanta
 
 * Special `%n` syntax for referring to loop indices.
 
+* Initial direct addressing layers deep. You can `cp true x.y.z` without first needing to initialize `x` as an object then initialize `y` on `x` as an object.
+
+* The Map as the universal data structure. JavaScript flexibly interprets number keys into strings, and we do the same thing here. Assuming no CPU bottleneck for the app, it is nice to have one universal structure.
+
+* Address substitutions. You can `cp 1 snk./%1/.x`. Since `%1` is between the `/` signs, it gets interpreted in scope. So this code copies `1` to the `x` field of whatever snake item we are currently looping over.
+
 * General assembly character. There is something that just feels good about each line beginning with its operation. Everyone knows what `b = a` means, but it's still intriguing to `mov a b`
 
 
