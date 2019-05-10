@@ -1,6 +1,6 @@
 # Lang-Lang
 
-This is my first programming language, in the style of high-level assembly. I think it is pleasant to have each line begin with some atomic instruction about what the computer is doing.
+This is my first programming language, in the style of high-level assembly. I think it is pleasant to have each line begin with some atomic instruction about what the computer is doing. 😄
 
 Lang-Lang is implemented in JavaScript, which of course means all of the advantages of working inside of the browser.
 
