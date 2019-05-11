@@ -37,19 +37,27 @@ stop
 
 
 // :: rightHandle
+if state != 2
 cp 1 state
+fi
 stop
 
 // :: leftHandle
+if state != 1
 cp 2 state
+fi
 stop
 
 // :: upHandle
+if state != 4
 cp 3 state
+fi
 stop
 
 // :: downHandle
+if state != 3
 cp 4 state
+fi
 stop
 
 

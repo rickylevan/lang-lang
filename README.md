@@ -14,7 +14,7 @@ Lang-Lang is implemented in JavaScript, which of course means all of the advanta
 
 * Initial direct addressing layers deep. You can `cp true x.y.z` without first needing to initialize `x` as an object then initialize `y` on `x` as an object.
 
-* The Map as the universal data structure. JavaScript flexibly interprets number keys into strings, and we do the same thing here. Assuming no CPU bottleneck for the app, it is nice to have one universal structure. We, indexing by 1, represent `[10, 20, 30]` as `{1: 10, 2: 20, 3: 30}`.
+* The Map as the universal data structure. JavaScript flexibly interprets number keys into strings, and we do the same thing here. Assuming no CPU bottleneck for the app, it is nice to have one universal structure. We, indexing by 1, represent `[10, 20, 30]` as `{1: 10, 2: 20, 3: 30}`. The JavaScript map is unordered, and there is currently no way in Lang-Lang to iterate over all the keys of some object.
 
 * Address substitutions. You can `cp 1 snk./%1/.x`. Since `%1` is between the `/` signs, it gets interpreted in scope. So this code copies `1` to the `x` field of whatever snake item we are currently looping over.
 
